@@ -216,14 +216,15 @@
         </section>
 
         <!-- TAB 5: Dashboard & History Review Log -->
+        <!-- TAB 5: Interactive Dashboard (Bảng Theo Dõi Tuần / Tháng / Năm) -->
         <section class="tab-content" id="tab-dashboard">
             <div class="section-card">
                 <div class="section-header">
-                    <h2><span>📊</span> Dashboard Thống Kê Vịt Con 🐥</h2>
+                    <h2><span>📊</span> Bảng Theo Dõi Tiến Độ Vịt Con 🐥</h2>
                     <span class="reward-tag" id="dash-realtime-date-tag">📅 Cập nhật thời gian thực...</span>
                 </div>
 
-                <!-- Overview Stat Cards -->
+                <!-- Global Quick Overview Cards -->
                 <div class="dashboard-grid">
                     <div class="stat-card">
                         <div class="stat-icon">✅</div>
@@ -255,14 +256,125 @@
                     </div>
                 </div>
 
-                <h3 style="font-family: var(--font-heading); color: var(--pink-dark); margin: 20px 0 10px 0;">
-                    📅 Tổng Kết Hoàn Thành Theo Các Ngày Trong Tuần
-                </h3>
-                <div class="weekly-matrix-grid" id="weekly-matrix-grid">
-                    <!-- Dynamic matrix rendered by app.js -->
+                <!-- Dashboard Period Filter Sub-Tabs (Tuần / Tháng / Năm) -->
+                <div class="dash-period-selector">
+                    <button type="button" class="dash-period-btn active" data-dash-period="week">
+                        📅 Theo Tuần (Weekly)
+                    </button>
+                    <button type="button" class="dash-period-btn" data-dash-period="month">
+                        🗓️ Theo Tháng (Monthly)
+                    </button>
+                    <button type="button" class="dash-period-btn" data-dash-period="year">
+                        🏆 Theo Năm (Yearly / Tổng Quan)
+                    </button>
                 </div>
 
-                <h3 style="font-family: var(--font-heading); color: var(--pink-dark); margin: 24px 0 12px 0;">
+                <!-- PERIOD 1: Theo Tuần -->
+                <div class="dash-period-content active" id="dash-content-week">
+                    <!-- Progress bar for the current week -->
+                    <div class="dash-summary-box week-box">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                            <span style="font-family: var(--font-heading); font-weight: bold; color: #2E7D32; font-size: 1.15rem;">
+                                🎯 Tiến Độ Chỉ Tiêu Tuần Này
+                            </span>
+                            <span id="dash-week-percent-badge" class="reward-tag" style="background: #4CAF50; color: #FFF; font-size: 0.95rem;">0% Hoàn Thành</span>
+                        </div>
+                        <div class="weekly-progress-bg" style="height: 16px; background: #E0E0E0; border-radius: 10px; overflow: hidden; margin-bottom: 8px;">
+                            <div id="dash-week-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #4CAF50, #8BC34A); transition: width 0.5s ease;"></div>
+                        </div>
+                        <div style="font-size: 0.95rem; color: #33691E; display: flex; justify-content: space-between; font-weight: 600; flex-wrap: wrap; gap: 6px;">
+                            <span id="dash-week-completed-ratio">Đã làm: 0/0 việc</span>
+                            <span id="dash-week-status-tip">Chỉ tiêu tuần: 80%</span>
+                        </div>
+                    </div>
+
+                    <h3 style="font-family: var(--font-heading); color: var(--pink-dark); margin: 20px 0 10px 0;">
+                        📅 Tổng Kết Hoàn Thành 7 Ngày Trong Tuần (T2 ➔ CN)
+                    </h3>
+                    <div class="weekly-matrix-grid" id="weekly-matrix-grid">
+                        <!-- Dynamic matrix rendered by app.js -->
+                    </div>
+
+                    <h3 style="font-family: var(--font-heading); color: var(--purple-dark); margin: 24px 0 12px 0;">
+                        📋 Chi Tiết Từng Nhiệm Vụ Hằng Ngày Trong Tuần
+                    </h3>
+                    <div id="dash-week-task-breakdown">
+                        <!-- Rendered by app.js -->
+                    </div>
+                </div>
+
+                <!-- PERIOD 2: Theo Tháng -->
+                <div class="dash-period-content" id="dash-content-month" style="display:none;">
+                    <div class="dash-summary-box month-box">
+                        <h3 style="font-family: var(--font-heading); color: #7B1FA2; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 1.25rem;">
+                            <span>🗓️</span> Tổng Kết Tiến Độ Tháng <span id="dash-month-name-tag">9/2026</span>
+                        </h3>
+                        <div class="dash-month-stats-grid">
+                            <div class="dash-mini-stat">
+                                <div class="num" id="dash-month-tasks-count">0</div>
+                                <div class="lbl">Việc Đã Hoàn Thành</div>
+                            </div>
+                            <div class="dash-mini-stat">
+                                <div class="num" id="dash-month-stars-count">0 ⭐</div>
+                                <div class="lbl">Sao Tích Lũy Tháng</div>
+                            </div>
+                            <div class="dash-mini-stat">
+                                <div class="num" id="dash-month-rate-count">0%</div>
+                                <div class="lbl">Tỷ Lệ Chuyên Cần</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="font-family: var(--font-heading); color: var(--purple-dark); margin: 22px 0 12px 0;">
+                        📅 Tiến Trình 4 Tuần Trong Tháng
+                    </h3>
+                    <div class="month-weeks-grid" id="dash-month-weeks-grid">
+                        <!-- Rendered by app.js -->
+                    </div>
+
+                    <h3 style="font-family: var(--font-heading); color: var(--pink-dark); margin: 24px 0 12px 0;">
+                        🏆 Thử Thách Hằng Tháng Đã Đạt Được
+                    </h3>
+                    <div id="dash-month-challenges-list">
+                        <!-- Rendered by app.js -->
+                    </div>
+                </div>
+
+                <!-- PERIOD 3: Theo Năm -->
+                <div class="dash-period-content" id="dash-content-year" style="display:none;">
+                    <div class="dash-summary-box year-box">
+                        <h3 style="font-family: var(--font-heading); color: #E65100; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; font-size: 1.25rem;">
+                            <span>🏆</span> Bảng Vàng Thành Tích Cả Năm (2026) 👑
+                        </h3>
+                        <p style="color: #795548; font-size: 0.98rem; margin-bottom: 14px; font-weight: 500;">
+                            Tổng kết hành trình nỗ lực của bé trong cả năm để chinh phục Rương Kho Báu Level 10 Vương Miện Vàng! ✨
+                        </p>
+                        <div class="dash-year-stats-grid">
+                            <div class="dash-mini-stat gold">
+                                <div class="num" id="dash-year-total-stars">0 ⭐</div>
+                                <div class="lbl">Tổng Sao Tích Lũy Cả Năm</div>
+                            </div>
+                            <div class="dash-mini-stat gold">
+                                <div class="num" id="dash-year-level-badge">Level 1</div>
+                                <div class="lbl">Cấp Độ Hiện Tại</div>
+                            </div>
+                            <div class="dash-mini-stat gold">
+                                <div class="num" id="dash-year-wishes-fulfilled">0 🎁</div>
+                                <div class="lbl">Điều Ước Đã Đạt Được</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="font-family: var(--font-heading); color: var(--pink-dark); margin: 24px 0 12px 0;">
+                        🗓️ Lịch Trình Tiến Độ 12 Tháng Trong Năm 2026
+                    </h3>
+                    <div class="year-months-grid" id="dash-year-months-grid">
+                        <!-- Rendered by app.js -->
+                    </div>
+                </div>
+
+                <!-- Shared History Timeline -->
+                <h3 style="font-family: var(--font-heading); color: var(--pink-dark); margin: 28px 0 12px 0;">
                     📜 Lịch Sử Ghi Nhận Nhiệm Vụ & Duyệt Quà
                 </h3>
                 <div class="history-timeline" id="history-timeline">

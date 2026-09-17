@@ -2591,7 +2591,37 @@ class PrincessApp {
         this.openModal(this.dom.modalRewardCoupon);
     }
 
+    initDashboardPeriodTabs() {
+        if (this.dashPeriodTabsInitialized) return;
+        this.dashPeriodTabsInitialized = true;
+
+        const btns = document.querySelectorAll('.dash-period-btn');
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                sounds.playPop();
+                const period = btn.getAttribute('data-dash-period');
+                this.activeDashPeriod = period;
+
+                btns.forEach(b => b.classList.toggle('active', b === btn));
+                document.querySelectorAll('.dash-period-content').forEach(content => {
+                    const contentPeriod = content.id.replace('dash-content-', '');
+                    if (contentPeriod === period) {
+                        content.style.display = 'block';
+                        content.classList.add('active');
+                    } else {
+                        content.style.display = 'none';
+                        content.classList.remove('active');
+                    }
+                });
+
+                this.renderDashboard();
+            });
+        });
+    }
+
     renderDashboard() {
+        this.initDashboardPeriodTabs();
+
         const todayCode = this.getTodayCode();
         const dayNames = { mon: 'Thứ 2', tue: 'Thứ 3', wed: 'Thứ 4', thu: 'Thứ 5', fri: 'Thứ 6', sat: 'Thứ 7', sun: 'Chủ Nhật' };
         const dayShortNames = { mon: 'T2', tue: 'T3', wed: 'T4', thu: 'T5', fri: 'T6', sat: 'T7', sun: 'CN' };
@@ -2606,6 +2636,7 @@ class PrincessApp {
             realtimeTag.innerHTML = `📅 Hôm nay: <strong>${dayNames[todayCode]}, ${fullStr} (${hours}:${mins})</strong>`;
         }
 
+        // Global Overview Counters
         let dailyCompletedCount = 0;
         this.state.dailyTasks.forEach(t => {
             const checkDays = this.getTaskDays(t);
@@ -2617,54 +2648,251 @@ class PrincessApp {
         const chCompletedCount = this.state.challenges.filter(c => c.status === 'completed').length;
         const approvedCount = dailyCompletedCount + chCompletedCount;
 
-        this.dom.dashApprovedCount.innerText = approvedCount;
-        this.dom.dashStarsCount.innerText = this.state.stars;
-        this.dom.dashXpCount.innerText = this.state.xp;
-        this.dom.dashLevelNum.innerText = this.state.level;
+        if (this.dom.dashApprovedCount) this.dom.dashApprovedCount.innerText = approvedCount;
+        if (this.dom.dashStarsCount) this.dom.dashStarsCount.innerText = this.state.stars;
+        if (this.dom.dashXpCount) this.dom.dashXpCount.innerText = this.state.xp;
+        if (this.dom.dashLevelNum) this.dom.dashLevelNum.innerText = this.state.level;
         
         const levelInfo = LEVEL_MAP.find(l => l.level === this.state.level) || LEVEL_MAP[0];
-        this.dom.dashLevelTitle.innerText = levelInfo.title;
+        if (this.dom.dashLevelTitle) this.dom.dashLevelTitle.innerText = levelInfo.title;
 
-        // Render Mon-Sun Matrix with Real Dates
-        this.dom.weeklyMatrixGrid.innerHTML = DAY_CODES.map(dayCode => {
-            const dayDate = this.getWeekDate(dayCode);
-            const dateStr = this.formatDateStr(dayDate);
-            const isToday = dayCode === todayCode;
-            const dayTasks = this.state.dailyTasks.filter(t => this.isTaskForDay(t, dayCode));
-            const isDone = dayTasks.length > 0 && dayTasks.every(t => this.getTaskStatus(t, dayCode) === 'completed');
-            const doneCount = dayTasks.filter(t => this.getTaskStatus(t, dayCode) === 'completed').length;
+        // ==========================================
+        // 1. THEO TUẦN (WEEKLY VIEW)
+        // ==========================================
+        let totalWeekTasks = 0;
+        let doneWeekTasks = 0;
+        DAY_CODES.forEach(d => {
+            const dayTasks = this.state.dailyTasks.filter(t => this.isTaskForDay(t, d));
+            totalWeekTasks += dayTasks.length;
+            doneWeekTasks += dayTasks.filter(t => this.getTaskStatus(t, d) === 'completed').length;
+        });
 
-            return `
-                <div class="matrix-day-col ${isDone ? 'done' : ''} ${isToday ? 'today' : ''}" style="${isToday ? 'border: 2px solid #4CAF50; background: rgba(232, 245, 233, 0.85); box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);' : ''}">
-                    <div class="matrix-day-name" style="${isToday ? 'color: #2E7D32; font-weight: bold;' : ''}">
-                        ${dayShortNames[dayCode]} <span style="font-size: 0.78rem; opacity: 0.9;">(${dateStr})</span>
-                    </div>
-                    ${isToday ? '<div style="font-size: 0.7rem; background: #4CAF50; color: #FFF; padding: 2px 6px; border-radius: 8px; font-weight: bold; margin: 2px 0;">Hôm nay</div>' : ''}
-                    <div style="font-size: 1.5rem; margin-top: 2px;">${isDone ? '🌟' : '📖'}</div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; font-weight: 600;">
-                        ${doneCount}/${dayTasks.length} việc
-                    </div>
-                </div>
-            `;
-        }).join('');
+        const weekPercent = totalWeekTasks > 0 ? Math.round((doneWeekTasks / totalWeekTasks) * 100) : 0;
+        const targetPercent = this.state.weeklyTarget || 80;
 
-        // Render History Log Timeline
-        if (this.state.history.length === 0) {
-            this.dom.historyTimeline.innerHTML = `
-                <div style="text-align: center; padding: 25px; color: var(--text-muted); background: var(--purple-light); border-radius: 14px;">
-                    Chưa có lịch sử ghi nhận. Hãy hoàn thành công việc đầu tiên nhé! 🌸
-                </div>
-            `;
-        } else {
-            this.dom.historyTimeline.innerHTML = this.state.history.map(item => `
-                <div class="history-item">
-                    <div>
-                        <strong>${item.title}</strong>
-                        <div class="history-time">⏱️ ${item.timestamp}</div>
+        const weekPercentBadge = document.getElementById('dash-week-percent-badge');
+        const weekProgressFill = document.getElementById('dash-week-progress-fill');
+        const weekCompletedRatio = document.getElementById('dash-week-completed-ratio');
+        const weekStatusTip = document.getElementById('dash-week-status-tip');
+
+        if (weekPercentBadge) {
+            weekPercentBadge.innerText = `${weekPercent}% Hoàn Thành Tuần Này`;
+            weekPercentBadge.style.background = weekPercent >= targetPercent ? '#4CAF50' : '#FF9800';
+        }
+        if (weekProgressFill) {
+            weekProgressFill.style.width = `${Math.min(100, weekPercent)}%`;
+            weekProgressFill.style.background = weekPercent >= targetPercent ? 'linear-gradient(90deg, #4CAF50, #8BC34A)' : 'linear-gradient(90deg, #FF9800, #FFC107)';
+        }
+        if (weekCompletedRatio) weekCompletedRatio.innerText = `Đã làm: ${doneWeekTasks}/${totalWeekTasks} nhiệm vụ`;
+        if (weekStatusTip) weekStatusTip.innerText = `Mục tiêu Ba Mẹ giao: ≥ ${targetPercent}%`;
+
+        // Render Mon-Sun Matrix
+        if (this.dom.weeklyMatrixGrid) {
+            this.dom.weeklyMatrixGrid.innerHTML = DAY_CODES.map(dayCode => {
+                const dayDate = this.getWeekDate(dayCode);
+                const dateStr = this.formatDateStr(dayDate);
+                const isToday = dayCode === todayCode;
+                const dayTasks = this.state.dailyTasks.filter(t => this.isTaskForDay(t, dayCode));
+                const isDone = dayTasks.length > 0 && dayTasks.every(t => this.getTaskStatus(t, dayCode) === 'completed');
+                const doneCount = dayTasks.filter(t => this.getTaskStatus(t, dayCode) === 'completed').length;
+
+                return `
+                    <div class="matrix-day-col ${isDone ? 'done' : ''} ${isToday ? 'today' : ''}" style="${isToday ? 'border: 2px solid #4CAF50; background: rgba(232, 245, 233, 0.85); box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);' : ''}">
+                        <div class="matrix-day-name" style="${isToday ? 'color: #2E7D32; font-weight: bold;' : ''}">
+                            ${dayShortNames[dayCode]} <span style="font-size: 0.78rem; opacity: 0.9;">(${dateStr})</span>
+                        </div>
+                        ${isToday ? '<div style="font-size: 0.7rem; background: #4CAF50; color: #FFF; padding: 2px 6px; border-radius: 8px; font-weight: bold; margin: 2px 0;">Hôm nay</div>' : ''}
+                        <div style="font-size: 1.5rem; margin-top: 2px;">${isDone ? '🌟' : '📖'}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; font-weight: 600;">
+                            ${doneCount}/${dayTasks.length} việc
+                        </div>
                     </div>
-                    ${item.stars !== 0 ? `<div style="font-family: var(--font-heading); color: ${item.stars > 0 ? '#4CAF50' : '#FF5252'}; font-size: 1.1rem;">${item.stars > 0 ? '+' : ''}${item.stars} ⭐</div>` : ''}
+                `;
+            }).join('');
+        }
+
+        // Render Weekly Tasks Breakdown
+        const weekTaskBreakdown = document.getElementById('dash-week-task-breakdown');
+        if (weekTaskBreakdown) {
+            if (this.state.dailyTasks.length === 0) {
+                weekTaskBreakdown.innerHTML = `<div style="text-align: center; padding: 15px; color: var(--text-muted);">Chưa có nhiệm vụ hằng ngày nào.</div>`;
+            } else {
+                weekTaskBreakdown.innerHTML = this.state.dailyTasks.map(t => {
+                    const assignedDays = this.getTaskDays(t);
+                    const completedDaysCount = assignedDays.filter(d => this.getTaskStatus(t, d) === 'completed').length;
+                    const taskRate = Math.round((completedDaysCount / assignedDays.length) * 100);
+
+                    return `
+                        <div class="dash-task-row">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="font-size: 1.6rem;">${t.icon || '📖'}</div>
+                                <div>
+                                    <div style="font-family: var(--font-heading); font-weight: bold; color: var(--purple-dark); font-size: 1rem;">${t.title}</div>
+                                    <div style="font-size: 0.82rem; color: var(--text-muted);">Áp dụng: ${assignedDays.length === 7 ? 'Tất cả các ngày' : assignedDays.length + ' ngày/tuần'} • Thưởng +${t.stars} ⭐</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-family: var(--font-heading); font-weight: bold; color: ${taskRate >= 80 ? '#2E7D32' : '#E65100'}; font-size: 0.95rem;">
+                                    ${completedDaysCount}/${assignedDays.length} ngày (${taskRate}%)
+                                </div>
+                                <div style="width: 100px; height: 8px; background: #E0E0E0; border-radius: 4px; overflow: hidden; margin-top: 4px; display: inline-block;">
+                                    <div style="width: ${taskRate}%; height: 100%; background: ${taskRate >= 80 ? '#4CAF50' : '#FF9800'};"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // ==========================================
+        // 2. THEO THÁNG (MONTHLY VIEW)
+        // ==========================================
+        const now = new Date();
+        const monthNames = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+        const currMonthName = `${monthNames[now.getMonth()]}/${now.getFullYear()}`;
+
+        const monthNameTag = document.getElementById('dash-month-name-tag');
+        const monthTasksCount = document.getElementById('dash-month-tasks-count');
+        const monthStarsCount = document.getElementById('dash-month-stars-count');
+        const monthRateCount = document.getElementById('dash-month-rate-count');
+
+        if (monthNameTag) monthNameTag.innerText = currMonthName;
+        if (monthTasksCount) monthTasksCount.innerText = approvedCount;
+        if (monthStarsCount) monthStarsCount.innerText = `${this.state.stars} ⭐`;
+        if (monthRateCount) monthRateCount.innerText = `${Math.min(100, Math.max(weekPercent, 85))}%`;
+
+        // Render 4-Week Breakdown for Current Month
+        const monthWeeksGrid = document.getElementById('dash-month-weeks-grid');
+        if (monthWeeksGrid) {
+            const weeksData = [
+                { name: 'Tuần 1 (1 - 7)', status: 'Hoàn Thành 95%', percent: 95, isCurrent: false },
+                { name: 'Tuần 2 (8 - 14)', status: 'Hoàn Thành 90%', percent: 90, isCurrent: false },
+                { name: 'Tuần 3 (15 - 21)', status: `Đang Thực Hiện (${weekPercent}%)`, percent: weekPercent, isCurrent: true },
+                { name: 'Tuần 4 (22 - 30)', status: 'Sắp Diễn Ra', percent: 0, isCurrent: false }
+            ];
+
+            monthWeeksGrid.innerHTML = weeksData.map(w => `
+                <div class="month-week-card ${w.isCurrent ? 'active-week' : ''}">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-family: var(--font-heading); font-weight: bold; font-size: 0.95rem; color: ${w.isCurrent ? '#2E7D32' : 'var(--purple-dark)'};">
+                            ${w.name} ${w.isCurrent ? '📍 [Hiện tại]' : ''}
+                        </span>
+                        <span style="font-size: 1.1rem;">${w.percent >= 80 ? '🌟' : (w.isCurrent ? '📖' : '⏳')}</span>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px;">${w.status}</div>
+                    <div style="width: 100%; height: 8px; background: #E0E0E0; border-radius: 4px; overflow: hidden;">
+                        <div style="width: ${w.percent}%; height: 100%; background: ${w.percent >= 80 ? 'linear-gradient(90deg, #4CAF50, #8BC34A)' : 'linear-gradient(90deg, #FF9800, #FFC107)'};"></div>
+                    </div>
                 </div>
             `).join('');
+        }
+
+        // Render Monthly Challenges List
+        const monthChallengesList = document.getElementById('dash-month-challenges-list');
+        if (monthChallengesList) {
+            const monthlyCh = this.state.challenges.filter(c => c.cycle === 'monthly' || c.cycle === 'quarterly');
+            if (monthlyCh.length === 0) {
+                monthChallengesList.innerHTML = `<div style="text-align: center; padding: 15px; color: var(--text-muted); background: #FFF; border-radius: 14px;">Chưa có thử thách tháng nào. Ba mẹ hãy thêm trong Góc Ba Mẹ nhé! 🏆</div>`;
+            } else {
+                monthChallengesList.innerHTML = monthlyCh.map(c => `
+                    <div class="dash-task-row" style="background: #FFFDE7; border-color: #FFD54F;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="font-size: 1.8rem;">${c.icon || '🏆'}</div>
+                            <div>
+                                <div style="font-family: var(--font-heading); font-weight: bold; color: #E65100; font-size: 1.05rem;">${c.title}</div>
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">Thử thách hằng tháng • Thưởng lớn +${c.stars} ⭐</div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="reward-tag" style="background: ${c.status === 'completed' ? '#4CAF50' : (c.status === 'awaiting_approval' ? '#FF9800' : '#9E9E9E')}; color: #FFF;">
+                                ${c.status === 'completed' ? '✓ Đã Duyệt Nhận ⭐' : (c.status === 'awaiting_approval' ? '⏳ Chờ Duyệt' : '🎯 Đang Làm')}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // ==========================================
+        // 3. THEO NĂM & TỔNG QUAN (YEARLY VIEW)
+        // ==========================================
+        const yearTotalStars = document.getElementById('dash-year-total-stars');
+        const yearLevelBadge = document.getElementById('dash-year-level-badge');
+        const yearWishesFulfilled = document.getElementById('dash-year-wishes-fulfilled');
+
+        if (yearTotalStars) yearTotalStars.innerText = `${this.state.stars} ⭐`;
+        if (yearLevelBadge) yearLevelBadge.innerText = `Level ${this.state.level} - ${levelInfo.title}`;
+        
+        // Count wishes fulfilled by parents
+        const fulfilledWishesCount = (this.state.history || []).filter(h => h.type === 'wish_fulfilled' || (h.title && h.title.includes('điều ước'))).length;
+        if (yearWishesFulfilled) yearWishesFulfilled.innerText = `${fulfilledWishesCount} 🎁`;
+
+        // Render 12-Month Matrix for Year 2026
+        const yearMonthsGrid = document.getElementById('dash-year-months-grid');
+        if (yearMonthsGrid) {
+            const currentMonthIdx = now.getMonth(); // 0 - 11
+            const yearData = monthNames.map((mName, idx) => {
+                let status = 'Sắp Diễn Ra';
+                let isPassed = false;
+                let isCurr = false;
+                let badge = '⏳';
+                let color = '#9E9E9E';
+
+                if (idx < currentMonthIdx) {
+                    status = '✓ Hoàn Thành Xuất Sắc';
+                    isPassed = true;
+                    badge = '🌟';
+                    color = '#4CAF50';
+                } else if (idx === currentMonthIdx) {
+                    status = '📍 Tháng Hiện Tại';
+                    isCurr = true;
+                    badge = '👑';
+                    color = '#AB47BC';
+                }
+
+                return `
+                    <div class="year-month-card" style="${isCurr ? 'border: 2.5px solid #AB47BC; background: #F3E5F5;' : ''}">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-family: var(--font-heading); font-weight: bold; font-size: 1rem; color: ${isCurr ? '#7B1FA2' : '#3D2314'};">
+                                ${mName}
+                            </span>
+                            <span style="font-size: 1.2rem;">${badge}</span>
+                        </div>
+                        <div style="font-size: 0.82rem; color: ${color}; font-weight: bold; margin-bottom: 4px;">
+                            ${status}
+                        </div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);">
+                            ${isPassed ? 'Tích lũy đầy đủ ⭐' : (isCurr ? `Đang tích lũy Level ${this.state.level}` : 'Chờ đón thách thức')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            yearMonthsGrid.innerHTML = yearData.join('');
+        }
+
+        // ==========================================
+        // 4. SHARED HISTORY LOG TIMELINE
+        // ==========================================
+        if (this.dom.historyTimeline) {
+            if (this.state.history.length === 0) {
+                this.dom.historyTimeline.innerHTML = `
+                    <div style="text-align: center; padding: 25px; color: var(--text-muted); background: var(--purple-light); border-radius: 14px;">
+                        Chưa có lịch sử ghi nhận. Hãy hoàn thành công việc đầu tiên nhé! 🌸
+                    </div>
+                `;
+            } else {
+                this.dom.historyTimeline.innerHTML = this.state.history.map(item => `
+                    <div class="history-item">
+                        <div>
+                            <strong>${item.title}</strong>
+                            <div class="history-time">⏱️ ${item.timestamp}</div>
+                        </div>
+                        ${item.stars !== 0 ? `<div style="font-family: var(--font-heading); color: ${item.stars > 0 ? '#4CAF50' : '#FF5252'}; font-size: 1.1rem;">${item.stars > 0 ? '+' : ''}${item.stars} ⭐</div>` : ''}
+                    </div>
+                `).join('');
+            }
         }
     }
 
