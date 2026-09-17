@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhật Ký & Thử Thách Vịt Con Cute 🐥👑⭐</title>
+    <!-- Cute Fonts & Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Background Decorative Floating Elements -->
+    <div class="bg-decorations">
+        <div class="floating-icon">🐥</div>
+        <div class="floating-icon">🐣</div>
+        <div class="floating-icon">👑</div>
+        <div class="floating-icon">🦆</div>
+        <div class="floating-icon">✨</div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="app-container">
+
+        <!-- Header Profile Card (Góc Của Bé) -->
+        <header class="header-card">
+            <div class="profile-info">
+                <!-- Circular Profile Avatar with 3D Cute Chest Duck Image -->
+                <div class="avatar-wrapper" id="avatar-wrapper" title="Bấm để đổi ảnh đại diện Vịt Con">
+                    <div class="avatar-crown-badge">👑</div>
+                    <div class="avatar-img" id="avatar-img-container">
+                        <img src="images/chest_level_1.png" alt="Avatar Vịt Cute">
+                    </div>
+                    <div class="avatar-edit-badge">✏️</div>
+                </div>
+
+                <div class="user-meta">
+                    <h1 id="princess-name">Công Chúa Vịt Con 🐥✨</h1>
+                    <button class="level-title-btn" id="princess-level-title">
+                        <span>👑</span> Công chúa Vịt Tập Sự - Lv 1 <span>🔍</span>
+                    </button>
+                    <div class="xp-container">
+                        <div class="xp-bar-bg">
+                            <div class="xp-bar-fill" id="xp-bar-fill"></div>
+                        </div>
+                        <div class="xp-text" id="xp-text">0 / 100 XP</div>
+                    </div>
+                </div>
+
+                <!-- Dedicated Standalone 64px Wish Chest Icon Button in Child's Corner -->
+                <button class="btn-small-wish-chest" id="btn-header-open-wish" title="Chiếc Rương Ước Nguyện Của Con - Bấm vào để ước gửi Ba Mẹ!">
+                    <img src="images/wish_chest_64.png" alt="Chiếc Rương Ước Nguyện" class="btn-wish-chest-img">
+                    <span class="nav-wish-badge" id="header-wish-badge" style="display:none;"></span>
+                </button>
+            </div>
+
+            <!-- Header Right Section: Mascot & Counter Pills (Góc Ba Mẹ) -->
+            <div class="header-right-side">
+                <!-- Cute Interactive Animated 3D Duck Boat Mascot -->
+                <div class="duck-mascot-container idle" id="duck-mascot-container" title="Bấm vào Vịt Chèo Thuyền để tương tác vui vẻ!">
+                    <img src="images/mascot_duck.png" alt="Vịt Con Chèo Thuyền Cute" class="duck-img-mascot">
+                    <div class="duck-speech-bubble" id="duck-speech-bubble">Quạc quạc! Cố lên nhé! 🐣✨</div>
+                </div>
+
+                <div class="header-counters-col">
+                    <div class="header-counters">
+                        <div class="counter-pill stars-pill" id="stars-pill" title="Sao / Trứng vàng tích lũy">
+                            <span>⭐</span>
+                            <span id="star-count">0</span>
+                        </div>
+                        <button class="btn-parent-lock" id="btn-parent-open">
+                            <span>🔒</span> Góc Ba Mẹ
+                            <span class="parent-badge" id="pending-count-badge" style="display:none;">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Navigation Tabs (Giao diện nguyên bản 6 tabs) -->
+        <nav class="main-nav">
+            <button class="nav-tab active" data-tab="tab-daily">
+                <span>📖</span> Sách Nhật Ký 🐥
+            </button>
+            <button class="nav-tab" data-tab="tab-challenges">
+                <span>🏆</span> Thử Thách 🐥
+            </button>
+            <button class="nav-tab" data-tab="tab-levels">
+                <span>🐥</span> 10 Rương Vịt Level
+            </button>
+            <button class="nav-tab" data-tab="tab-shop">
+                <span>🎁</span> Đổi Thưởng 🐥
+            </button>
+            <button class="nav-tab" data-tab="tab-dashboard">
+                <span>📊</span> Dashboard 🐥
+            </button>
+            <button class="nav-tab" data-tab="tab-penalties" style="color: #D32F2F; font-weight: bold;">
+                <span>⚠️</span> Quy Định Phạt 📜
+            </button>
+            <button class="nav-tab" data-tab="tab-chest">
+                <span>✨</span> Rương Cuối Tuần 🐥
+            </button>
+        </nav>
+
+        <!-- TAB 1: Premium Flip Book Diary (Quyển Sách Nhật Ký Hằng Ngày Thứ 2 -> CN) -->
+        <section class="tab-content active" id="tab-daily">
+            <div class="diary-book-wrapper">
+                <!-- Time Travel Navigation Bar (Quay Ngược Quá Khứ & Nhấn Tới Tương Lai) -->
+                <div class="time-travel-bar">
+                    <button class="btn-time-travel btn-past" id="btn-prev-week" title="Quay ngược thời gian 1 tuần">
+                        <span class="time-icon">⏳</span>
+                        <span class="time-label">◀ Tuần Trước</span>
+                    </button>
+
+                    <div class="time-current-badge" id="time-current-badge">
+                        <span class="badge-icon">📅</span>
+                        <span class="badge-text" id="week-range-text">Tuần Này (14/09 - 20/09)</span>
+                        
+                        <div class="custom-date-picker-box">
+                            <button type="button" class="btn-pick-custom-date" id="btn-trigger-date-picker" title="Bấm chọn ngày tháng năm bất kỳ trong quá khứ hoặc tương lai">
+                                🗓️ <span id="selected-date-display">17/09/26</span>
+                            </button>
+                            <input type="date" id="input-time-travel-date" class="input-time-travel-date" title="Chọn ngày bất kỳ">
+                        </div>
+
+                        <button class="btn-reset-today-week" id="btn-reset-today-week" title="Về Ngày Hôm Nay">📌 Hôm Nay</button>
+                    </div>
+
+                    <button class="btn-time-travel btn-future" id="btn-next-week" title="Xem nhật ký tương lai 1 tuần">
+                        <span class="time-label">Tuần Sau ▶</span>
+                        <span class="time-icon">🚀</span>
+                    </button>
+                </div>
+
+                <div class="diary-book-container">
+                    <div class="spiral-binder"></div>
+                    
+                    <!-- Book Day Bookmark Tabs (Thứ 2 -> Chủ Nhật) -->
+                    <div class="day-bookmark-tabs" id="day-bookmark-tabs">
+                        <button class="day-bookmark" data-day="mon">Thứ 2 🐥</button>
+                        <button class="day-bookmark" data-day="tue">Thứ 3 🐣</button>
+                        <button class="day-bookmark" data-day="wed">Thứ 4 🌼</button>
+                        <button class="day-bookmark" data-day="thu">Thứ 5 🍀</button>
+                        <button class="day-bookmark" data-day="fri">Thứ 6 🎀</button>
+                        <button class="day-bookmark" data-day="sat">Thứ 7 ⭐</button>
+                        <button class="day-bookmark" data-day="sun">Chủ Nhật 👑</button>
+                    </div>
+
+                    <div class="diary-page-body" id="diary-page-body">
+                        <div class="diary-page-header-row">
+                            <span class="diary-page-day-title" id="diary-page-day-title">📖 Nhật Ký Vịt Con: Thứ 2 🐥</span>
+                            <button class="btn-reset-day-tasks" id="btn-reset-day-tasks">🔄 Làm Lại Trang Này</button>
+                        </div>
+
+                        <div class="habit-list" id="daily-habit-list">
+                            <!-- Dynamic rendering by app.js -->
+                        </div>
+
+                        <div class="page-turn-controls">
+                            <button class="btn-page-turn" id="btn-prev-page">◀ Ngày Trước (Quá Khứ)</button>
+                            <button class="btn-page-turn btn-today-jump" id="btn-today-jump">📅 Hôm Nay</button>
+                            <button class="btn-page-turn" id="btn-next-page">(Tương Lai) Ngày Sau ▶</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: Cycle Challenges -->
+        <section class="tab-content" id="tab-challenges">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><span>🏆</span> Thử Thách Vịt Con Chăm Ngoan 🐥</h2>
+                </div>
+
+                <div class="challenge-tabs">
+                    <button class="sub-tab active" data-cycle="weekly">📅 Hằng Tuần</button>
+                    <button class="sub-tab" data-cycle="monthly">🗓️ Hằng Tháng</button>
+                    <button class="sub-tab" data-cycle="quarterly">👑 Hằng Quý</button>
+                </div>
+
+                <div class="challenge-grid" id="challenge-grid">
+                    <!-- Dynamic rendering by app.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: 10 Level Chests Grid (Vịt Vỏ Trứng đến Vịt Vương Miện Vàng) -->
+        <section class="tab-content" id="tab-levels">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><span>🐥</span> 10 Rương Vịt Kho Báu Thăng Cấp</h2>
+                    <span class="reward-tag">Mở 10 Rương Vịt Cute từ Vịt Vỏ Trứng đến Vương Miện Vàng! 👑</span>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px;">
+                    Mỗi cấp độ sẽ mở khóa 1 Rương Vịt Kho Báu Độc Quyền. Bé hãy tích lũy XP để thăng cấp và mở từng chiếc rương vịt cute từ Vịt Vỏ Trứng (Level 1) đến Vịt Vương Miện Vàng (Level 10) nhé!
+                </p>
+
+                <div class="level-chest-grid" id="level-chest-grid">
+                    <!-- Dynamic rendering by app.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: Reward Shop -->
+        <section class="tab-content" id="tab-shop">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><span>🎁</span> Cửa Hàng Đổi Quà Vịt Con 🐥</h2>
+                    <span class="reward-tag">Dùng ⭐ tích lũy để nhận quà!</span>
+                </div>
+
+                <div class="shop-grid" id="shop-grid">
+                    <!-- Dynamic rendering by app.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: Dashboard & History Review Log -->
+        <section class="tab-content" id="tab-dashboard">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><span>📊</span> Dashboard Thống Kê Vịt Con 🐥</h2>
+                    <span class="reward-tag" id="dash-realtime-date-tag">📅 Cập nhật thời gian thực...</span>
+                </div>
+
+                <!-- Overview Stat Cards -->
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div>
+                            <div class="stat-val" id="dash-approved-count">0</div>
+                            <div class="stat-lbl">Việc Đã Được Duyệt</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div>
+                            <div class="stat-val" id="dash-stars-count">0</div>
+                            <div class="stat-lbl">Số Sao Hiện Có</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🌟</div>
+                        <div>
+                            <div class="stat-val" id="dash-xp-count">0</div>
+                            <div class="stat-lbl">Tổng Điểm XP</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👑</div>
+                        <div>
+                            <div class="stat-val" id="dash-level-num">1</div>
+                            <div class="stat-lbl" id="dash-level-title">Công chúa Tập Sự</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="font-family: var(--font-heading); color: var(--pink-dark); margin: 20px 0 10px 0;">
+                    📅 Tổng Kết Hoàn Thành Theo Các Ngày Trong Tuần
+                </h3>
+                <div class="weekly-matrix-grid" id="weekly-matrix-grid">
+                    <!-- Dynamic matrix rendered by app.js -->
+                </div>
+
+                <h3 style="font-family: var(--font-heading); color: var(--pink-dark); margin: 24px 0 12px 0;">
+                    📜 Lịch Sử Ghi Nhận Nhiệm Vụ & Duyệt Quà
+                </h3>
+                <div class="history-timeline" id="history-timeline">
+                    <!-- Dynamic timeline rendered by app.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: Weekend Treasure Chest -->
+        <section class="tab-content" id="tab-chest">
+            <div class="section-card weekend-chest-card">
+                <div class="progress-banner">
+                    <h3>💎 Tiến Trình Hoàn Thành Nhiệm Vụ Tuần Này</h3>
+                    <div class="weekly-progress-bg">
+                        <div class="weekly-progress-fill" id="weekly-progress-fill"></div>
+                    </div>
+                    <div class="progress-percent-text" id="weekly-progress-text">Đã hoàn thành 0% chỉ tiêu tuần</div>
+                </div>
+
+                <div class="chest-visual-wrapper locked" id="chest-wrapper">
+                    <div class="chest-icon" id="chest-icon">🎁</div>
+                </div>
+
+                <button class="btn-open-chest" id="btn-open-chest" disabled>
+                    ✨ Mở Rương Cuối Tuần ✨
+                </button>
+
+                <div>
+                    <span class="weekend-status-tag" id="weekend-status-tag">
+                        🔒 Mở khóa vào Thứ 7 & Chủ Nhật (Chỉ tiêu ≥ 80%)
+                    </span>
+                    <button class="preview-toggle-btn" id="btn-toggle-weekend-test">
+                        [Ba mẹ: Test mode]
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 7: Chiếc Rương Ước Nguyện Thần Kỳ 🎁 -->
+        <section class="tab-content" id="tab-wishes">
+            <div class="wish-chest-card section-card">
+                <div class="wish-banner-container">
+                    <div class="wish-magic-glow"></div>
+                    <div class="wish-stars-magic">
+                        <span>⭐</span><span>✨</span><span>🌟</span><span>✨</span><span>⭐</span>
+                    </div>
+                    <img src="images/wish_chest_banner.jpg" alt="Chiếc Rương Ước Nguyện" class="wish-chest-banner-img">
+                </div>
+                
+                <div class="wish-card-body">
+                    <h2 class="wish-card-title">🎁 CHIẾC RƯƠNG ƯỚC NGUYỆN 🐥✨</h2>
+                    <p class="wish-slogan">"Hãy cứ ước mơ và nỗ lực - Một ngày ước mơ sẽ thành sự thật 💛 Ba mẹ tin con làm được 💖"</p>
+                    <p class="wish-subtitle">Bé hãy mở rương và viết điều ước của mình gửi đến Ba Mẹ nhé! ✨</p>
+
+                    <div class="wish-card-actions">
+                        <button class="btn-open-wish-chest" id="btn-trigger-open-wish">
+                            ✨ MỞ RƯƠNG ƯỚC NGUYỆN ✨
+                        </button>
+                        <button class="btn-view-wish-history" id="btn-trigger-view-wishes">
+                            📜 HÀNH TRÌNH ĐIỀU ƯỚC 🌈
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: Bảng Nội Quy & Điểm Phạt Của Bé ⚠️ -->
+        <section class="tab-content" id="tab-penalties">
+            <div class="section-card" style="border: 3px solid #EF5350; background: linear-gradient(180deg, #FFFDE7 0%, #FFEBEE 100%);">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 3rem; margin-bottom: 6px;">📜</div>
+                    <h2 style="font-family: var(--font-heading); color: #C62828; font-size: 1.6rem; margin-bottom: 6px;">
+                        BẢNG NỘI QUY BẢO VỆ CÔNG CHÚA 🐥✨
+                    </h2>
+                    <p style="color: #B71C1C; font-family: var(--font-heading); font-size: 1.02rem; max-width: 600px; margin: 0 auto; line-height: 1.5;">
+                        Dưới đây là danh sách các quy định của Ba Mẹ giúp bé rèn luyện thói quen ngoan mỗi ngày. Bé nhớ chú ý giữ gìn để không bị trừ Sao tích lũy nhé! 💖
+                    </p>
+                </div>
+
+                <div class="child-penalties-grid" id="child-penalties-grid">
+                    <!-- Rendered dynamically by app.js -->
+                </div>
+
+                <!-- Recent Penalties Record Section -->
+                <div style="margin-top: 28px; background: #FFF; border: 2px dashed #EF5350; border-radius: 20px; padding: 20px;">
+                    <h3 style="font-family: var(--font-heading); color: #C62828; font-size: 1.25rem; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                        <span>🚨</span> Lịch Sử Bị Trừ Điểm / Phạt Lỗi Của Bé
+                    </h3>
+                    <div id="child-penalty-history">
+                        <!-- Rendered dynamically by app.js -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- MODAL 1: Parent PIN Entry -->
+    <div class="modal-overlay" id="modal-pin">
+        <div class="modal-card">
+            <button class="modal-close btn-close-modal">&times;</button>
+            <h2 class="modal-title"><span>🔒</span> Góc Của Ba Mẹ</h2>
+            <p style="text-align: center; color: var(--text-muted);">Nhập mã PIN để mở khóa cài đặt (Mặc định: 1234)</p>
+            
+            <div class="pin-dots">
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+            </div>
+
+            <div class="keypad-grid">
+                <button class="key-btn" data-key="1">1</button>
+                <button class="key-btn" data-key="2">2</button>
+                <button class="key-btn" data-key="3">3</button>
+                <button class="key-btn" data-key="4">4</button>
+                <button class="key-btn" data-key="5">5</button>
+                <button class="key-btn" data-key="6">6</button>
+                <button class="key-btn" data-key="7">7</button>
+                <button class="key-btn" data-key="8">8</button>
+                <button class="key-btn" data-key="9">9</button>
+                <button class="key-btn" data-key="clear">C</button>
+                <button class="key-btn" data-key="0">0</button>
+                <button class="key-btn" data-key="back">⌫</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Parent Admin Panel -->
+    <div class="modal-overlay" id="modal-admin">
+        <div class="modal-card" style="max-width: 680px;">
+            <button class="modal-close btn-close-modal">&times;</button>
+            <h2 class="modal-title"><span>⚙️</span> Quản Lý Của Ba Mẹ</h2>
+
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-admin-tab="admin-approvals">
+                    🔔 Duyệt Nhiệm Vụ <span id="admin-pending-badge"></span>
+                </button>
+                <button class="admin-tab" data-admin-tab="admin-wishes">
+                    💌 Ước Nguyện <span id="admin-wishes-badge"></span>
+                </button>
+                <button class="admin-tab" data-admin-tab="admin-level-rewards">🎁 10 Rương Level</button>
+                <button class="admin-tab" data-admin-tab="admin-daily">Nhiệm Vụ Ngày</button>
+                <button class="admin-tab" data-admin-tab="admin-challenges">Thử Thách Chu Kỳ</button>
+                <button class="admin-tab" data-admin-tab="admin-shop">Cửa Hàng Quà</button>
+                <button class="admin-tab" data-admin-tab="admin-penalties" style="color: #D32F2F; font-weight: bold;">⚠️ Trừ Điểm / Phạt Lỗi</button>
+                <button class="admin-tab" data-admin-tab="admin-settings">Rương & Mật Mã</button>
+            </div>
+
+            <!-- Admin Tab: Approvals -->
+            <div class="admin-tab-content active" id="admin-approvals">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Danh sách các công việc bé đã nhấn hoàn thành đang chờ bạn kiểm tra & duyệt:</p>
+                    <button class="btn-approve" id="btn-approve-all" style="padding: 8px 16px;">✅ Duyệt Tất Cả</button>
+                </div>
+
+                <div id="admin-approvals-list">
+                    <!-- Dynamic rendering by app.js -->
+                </div>
+            </div>
+
+            <!-- Admin Tab: Child Wishes & Gift Dispatching -->
+            <div class="admin-tab-content" id="admin-wishes" style="display:none;">
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 14px;">
+                    Các điều ước ước mơ bé đã gửi vào Chiếc Rương Ước Nguyện. Ba mẹ bấm vào để xem, yêu thương hoặc <strong>điều quà</strong> cho bé nhé:
+                </p>
+
+                <div id="admin-wishes-list">
+                    <!-- Dynamic rendering by app.js -->
+                </div>
+            </div>
+
+            <!-- Admin Tab: 10 Level Chest Rewards Setup -->
+            <div class="admin-tab-content" id="admin-level-rewards" style="display:none;">
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px;">
+                    Ba mẹ tùy chỉnh nội dung món quà ẩn bên trong từng chiếc Rương Kho Báu từ Level 1 đến Level 10:
+                </p>
+
+                <form id="form-update-level-rewards">
+                    <div id="admin-level-rewards-inputs">
+                        <!-- Dynamic inputs for Levels 1-10 rendered by app.js -->
+                    </div>
+                    <button type="submit" class="btn-admin-submit" style="width: 100%; margin-top: 14px;">Lưu Cài Đặt 10 Rương Level</button>
+                </form>
+            </div>
+
+            <!-- Admin Tab: Daily Tasks -->
+            <div class="admin-tab-content" id="admin-daily" style="display:none;">
+                <form id="form-add-daily">
+                    <div class="form-group">
+                        <label>Tên Việc Cần Làm (Daily)</label>
+                        <input type="text" class="form-input" id="input-daily-title" placeholder="VD: Đọc 10 trang sách..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Bấm chọn tự do các thứ trong tuần (1 ngày, 2 ngày, 3 ngày... chọn tùy thích ✨)</label>
+                        <div class="day-select-presets">
+                            <button type="button" class="btn-day-preset" id="preset-days-all">✨ Chọn tất cả 7 ngày</button>
+                            <button type="button" class="btn-day-preset" id="preset-days-weekdays">🏫 T2 ➔ T6 (Đi học)</button>
+                            <button type="button" class="btn-day-preset" id="preset-days-weekend">🎈 T7 & CN (Cuối tuần)</button>
+                            <button type="button" class="btn-day-preset" id="preset-days-clear">🔄 Xóa chọn lại</button>
+                        </div>
+                        <div class="day-checkbox-grid" id="day-checkbox-grid">
+                            <button type="button" class="day-pill-btn active" data-day="mon">Thứ 2</button>
+                            <button type="button" class="day-pill-btn" data-day="tue">Thứ 3</button>
+                            <button type="button" class="day-pill-btn" data-day="wed">Thứ 4</button>
+                            <button type="button" class="day-pill-btn" data-day="thu">Thứ 5</button>
+                            <button type="button" class="day-pill-btn" data-day="fri">Thứ 6</button>
+                            <button type="button" class="day-pill-btn" data-day="sat">Thứ 7</button>
+                            <button type="button" class="day-pill-btn" data-day="sun">Chủ Nhật</button>
+                        </div>
+                        <div class="day-selection-feedback" id="day-selection-feedback">
+                            👉 Vui lòng bấm chọn các thứ áp dụng cho nhiệm vụ
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Biểu Tượng (Chọn Icon Cute 🐥📚🧹🏃‍♀️🎁)</label>
+                        <div class="icon-picker-wrapper">
+                            <input type="text" class="form-input icon-display-input" id="input-daily-icon" value="📚" required>
+                            <span class="icon-picker-tip">👈 Bấm vào icon bất kỳ bên dưới để chọn nhanh:</span>
+                        </div>
+                        <div class="icon-picker-grid-container" data-input-target="input-daily-icon"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Số Sao Thưởng (Stars)</label>
+                        <input type="number" class="form-input" id="input-daily-stars" value="5" min="1" required>
+                    </div>
+                    <button type="submit" class="btn-admin-submit">+ Thêm Việc Daily</button>
+                </form>
+
+                <hr style="margin: 18px 0; border: none; border-top: 1px dashed var(--pink-light);">
+                <div id="admin-daily-list"></div>
+            </div>
+
+            <!-- Admin Tab: Challenges -->
+            <div class="admin-tab-content" id="admin-challenges" style="display:none;">
+                <form id="form-add-challenge">
+                    <div class="form-group">
+                        <label>Tên Thử Thách</label>
+                        <input type="text" class="form-input" id="input-ch-title" placeholder="VD: Đạt điểm tốt bài thi toán" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Chu Kỳ</label>
+                        <select class="form-select" id="input-ch-cycle">
+                            <option value="weekly">Hằng Tuần</option>
+                            <option value="monthly">Hằng Tháng</option>
+                            <option value="quarterly">Hằng Quý</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Biểu Tượng Thử Thách 🏆</label>
+                        <div class="icon-picker-wrapper">
+                            <input type="text" class="form-input icon-display-input" id="input-ch-icon" value="🏆" required>
+                            <span class="icon-picker-tip">👈 Bấm vào icon bất kỳ bên dưới để chọn nhanh:</span>
+                        </div>
+                        <div class="icon-picker-grid-container" data-input-target="input-ch-icon"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Số Sao Thưởng</label>
+                        <input type="number" class="form-input" id="input-ch-stars" value="20" min="1" required>
+                    </div>
+                    <button type="submit" class="btn-admin-submit">+ Thêm Thử Thách</button>
+                </form>
+
+                <hr style="margin: 18px 0; border: none; border-top: 1px dashed var(--pink-light);">
+                <div id="admin-challenge-list"></div>
+            </div>
+
+            <!-- Admin Tab: Shop Items -->
+            <div class="admin-tab-content" id="admin-shop" style="display:none;">
+                <form id="form-add-shop">
+                    <div class="form-group">
+                        <label>Tên Món Quà</label>
+                        <input type="text" class="form-input" id="input-shop-title" placeholder="VD: 30 phút xem iPad" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Biểu Tượng Quà Tặng 🎁</label>
+                        <div class="icon-picker-wrapper">
+                            <input type="text" class="form-input icon-display-input" id="input-shop-icon" value="📱" required>
+                            <span class="icon-picker-tip">👈 Bấm vào icon bất kỳ bên dưới để chọn nhanh:</span>
+                        </div>
+                        <div class="icon-picker-grid-container" data-input-target="input-shop-icon"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Số Sao Cần Đổi</label>
+                        <input type="number" class="form-input" id="input-shop-cost" value="20" min="1" required>
+                    </div>
+                    <button type="submit" class="btn-admin-submit">+ Thêm Món Quà</button>
+                </form>
+
+                <hr style="margin: 18px 0; border: none; border-top: 1px dashed var(--pink-light);">
+                <div id="admin-shop-list"></div>
+            </div>
+
+            <!-- Admin Tab: Penalty / Deduct Points System -->
+            <div class="admin-tab-content" id="admin-penalties" style="display:none;">
+                <div style="background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%); border: 2px solid #EF5350; border-radius: 18px; padding: 16px; margin-bottom: 18px;">
+                    <h3 style="color: #C62828; font-family: var(--font-heading); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                        <span>⚠️</span> Phạt Lỗi & Trừ Điểm Bé
+                    </h3>
+                    <p style="color: #B71C1C; font-size: 0.9rem; line-height: 1.4;">
+                        Khi bé phạm lỗi hoặc không đạt yêu cầu, Ba Mẹ chọn lỗi bên dưới hoặc điền lý do để trừ trực tiếp vào số Sao tích lũy của bé. Hệ thống sẽ ghi nhận lịch sử rõ ràng để bé cố gắng hơn!
+                    </p>
+                </div>
+
+                <!-- Quick Penalty Action Form -->
+                <form id="form-apply-penalty" style="background: #FFF; border: 1.5px solid #FF8A80; border-radius: 16px; padding: 16px; margin-bottom: 18px; box-shadow: 0 4px 12px rgba(239, 83, 80, 0.15);">
+                    <h4 style="color: #D32F2F; font-family: var(--font-heading); margin-bottom: 12px;">🚨 Thực Hiện Trừ Điểm Trực Tiếp</h4>
+                    
+                    <div class="form-group">
+                        <label style="color: #C62828; font-weight: bold;">Lý Do Phạt / Tên Lỗi Phạm</label>
+                        <input type="text" class="form-input" id="input-penalty-reason" placeholder="VD: Xem iPad quá 30 phút..." required style="border-color: #EF5350;">
+                    </div>
+
+                    <div class="form-group">
+                        <label style="color: #C62828; font-weight: bold;">Số Sao Bị Trừ (⭐)</label>
+                        <input type="number" class="form-input" id="input-penalty-stars" value="10" min="1" max="500" required style="border-color: #EF5350;">
+                    </div>
+
+                    <button type="submit" class="btn-del" style="width: 100%; padding: 12px; font-size: 1rem; background: linear-gradient(135deg, #D32F2F, #F44336); color: #FFF; border-radius: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);">
+                        ⚠️ XÁC NHẬN TRỪ SỐ SAO BÉ
+                    </button>
+                </form>
+
+                <hr style="margin: 20px 0; border: none; border-top: 1.5px dashed #FFCDD2;">
+
+                <!-- Preset Penalty Rules List -->
+                <div style="margin-bottom: 12px;">
+                    <h4 style="color: #C62828; font-family: var(--font-heading); display: flex; align-items: center; justify-content: space-between;">
+                        <span>📋 Các Quy Định Phạt Mẫu (Bấm 1-Click Trừ Nhanh)</span>
+                    </h4>
+                </div>
+
+                <!-- Add New Custom Penalty Rule Form -->
+                <form id="form-add-penalty-rule" style="display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;">
+                    <input type="text" class="form-input" id="input-rule-title" placeholder="Tên lỗi phạt mới..." required style="flex: 2; min-width: 180px;">
+                    <input type="text" class="form-input" id="input-rule-icon" value="⚠️" style="width: 50px; text-align: center;">
+                    <input type="number" class="form-input" id="input-rule-stars" value="10" min="1" style="width: 90px;" placeholder="⭐ Trừ">
+                    <button type="submit" class="btn-admin-submit" style="background: #E53935; padding: 10px 14px;">+ Thêm Quy Định</button>
+                </form>
+
+                <div id="admin-penalty-rules-list">
+                    <!-- Rendered dynamically by app.js -->
+                </div>
+            </div>
+
+            <!-- Admin Tab: Settings (Weekend Gift & PIN) -->
+            <div class="admin-tab-content" id="admin-settings" style="display:none;">
+                <form id="form-update-settings">
+                    <div class="form-group">
+                        <label>Tên Bé Công Chúa</label>
+                        <input type="text" class="form-input" id="input-setting-name" value="Bé Yêu" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Quà Ẩn Trong Rương Cuối Tuần 🎁</label>
+                        <input type="text" class="form-input" id="input-setting-chest-gift" placeholder="VD: Mua 1 bộ đồ chơi Lego..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Chỉ Tiêu Tuần (% Hoàn thành tối thiểu)</label>
+                        <input type="number" class="form-input" id="input-setting-target" value="80" min="50" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Đổi Mã PIN Ba Mẹ (4 chữ số)</label>
+                        <input type="password" class="form-input" id="input-setting-pin" maxlength="4" placeholder="1234">
+                    </div>
+                    <button type="submit" class="btn-admin-submit">Lưu Cài Đặt</button>
+                </form>
+
+                <hr style="margin: 18px 0; border: none; border-top: 1px dashed var(--pink-light);">
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-del" id="btn-reset-demo" style="background:#FF9800; padding: 10px 16px;">Khôi Phục Dữ Liệu Mẫu</button>
+                    <button class="btn-del" id="btn-add-stars-test" style="background:#4CAF50; padding: 10px 16px;">+100 XP & +50 ⭐ (Thưởng Nhanh)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Secret Weekend Gift Reveal -->
+    <div class="modal-overlay" id="modal-chest-reveal">
+        <div class="modal-card chest-reveal-card">
+            <button class="modal-close btn-close-modal">&times;</button>
+            <h2 class="modal-title" style="justify-content: center;">🎉 MỞ RƯƠNG KHO BÁU! 🎉</h2>
+            <p style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--purple-dark);" id="chest-reveal-subtitle">
+                Chúc mừng bé đã chăm chỉ hoàn thành xuất sắc!
+            </p>
+
+            <div class="gift-card-graphic">
+                <h3 id="chest-reveal-header-title">👑 THẺ QUÀ TẶNG BÍ MẬT 👑</h3>
+                <p id="chest-secret-gift-text">Được đi xem phim & ăn ly kem siêu to!</p>
+            </div>
+
+            <p style="font-size: 0.9rem; color: var(--text-muted);">Hãy đưa màn hình này cho Ba/Mẹ để nhận quà ngay nhé! 💖</p>
+        </div>
+    </div>
+
+    <!-- MODAL 4: Reward Purchased Coupon -->
+    <div class="modal-overlay" id="modal-reward-coupon">
+        <div class="modal-card" style="text-align: center;">
+            <button class="modal-close btn-close-modal">&times;</button>
+            <h2 class="modal-title" style="justify-content: center;">🎟️ ĐỔI QUÀ THÀNH CÔNG!</h2>
+            <div style="font-size: 4rem; margin: 10px 0;" id="coupon-icon">🎁</div>
+            <h3 style="font-family: var(--font-heading); color: var(--pink-dark); font-size: 1.3rem;" id="coupon-title">Món Quà Công Chúa</h3>
+            <p style="margin: 14px 0; color: var(--text-muted);">Phiếu đổi quà đã được tạo. Bé hãy đưa phiếu này cho Ba Mẹ nhé!</p>
+            <button class="btn-open-chest btn-close-modal" style="padding: 10px 24px; font-size: 1rem;">Đã Nhận Quà</button>
+        </div>
+    </div>
+
+    <!-- MODAL 5: Avatar Selection -->
+    <div class="modal-overlay" id="modal-avatar">
+        <div class="modal-card">
+            <button class="modal-close btn-close-modal">&times;</button>
+            <h2 class="modal-title" style="justify-content: center;">✨ Chọn Ảnh Đại Diện Vịt Cute ✨</h2>
+            <p style="text-align: center; color: var(--text-muted); font-size: 0.95rem;">
+                Bé hãy chọn hình chú Vịt Con 3D dễ thương trong 10 rương mà mình thích nhất nhé!
+            </p>
+
+            <div class="avatar-preset-grid" id="avatar-preset-grid">
+                <div class="avatar-preset-card" data-avatar="images/chest_level_1.png" title="Vịt Vỏ Trứng 🐣">
+                    <img src="images/chest_level_1.png" alt="Vịt Vỏ Trứng">
+                </div>
+                <div class="avatar-preset-card" data-avatar="images/chest_level_2.png" title="Vịt Khủng Long 🦖">
+                    <img src="images/chest_level_2.png" alt="Vịt Khủng Long">
+                </div>
+                <div class="avatar-preset-card" data-avatar="images/chest_level_3.png" title="Vịt Thám Hiểm 🤠">
+                    <img src="images/chest_level_3.png" alt="Vịt Thám Hiểm">
+                </div>
+                <div class="avatar-preset-card" data-avatar="images/chest_level_4.png" title="Vịt Thủy Thủ ⚓">
+                    <img src="images/chest_level_4.png" alt="Vịt Thủy Thủ">
+                </div>
+                <div class="avatar-preset-card" data-avatar="images/chest_level_5.png" title="Vịt Phi Công 🥽">
+                    <img src="images/chest_level_5.png" alt="Vịt Phi Công">
+                </div>
+                <div class="avatar-preset-card" data-avatar="images/chest_level_6.png" title="Vịt Dâu Tây 🍓">
+                    <img src="images/chest_level_6.png" alt="Vịt Dâu Tây">
+                </div>
+                <div class="avatar-preset-card" data-avatar="images/chest_level_7.png" title="Vịt Nơ Tím 🌸">
+                    <img src="images/chest_level_7.png" alt="Vịt Nơ Tím">
+                </div>
+                <div class="avatar-preset-card" data-avatar="images/chest_level_8.png" title="Vịt Rocker 😎">
+                    <img src="images/chest_level_8.png" alt="Vịt Rocker">
+                </div>
+                <div class="avatar-preset-card" data-avatar="images/chest_level_9.png" title="Vịt Nơ Hồng 🎀">
+                    <img src="images/chest_level_9.png" alt="Vịt Nơ Hồng">
+                </div>
+                <div class="avatar-preset-card" data-avatar="images/chest_level_10.png" title="Vịt Vương Miện 👑">
+                    <img src="images/chest_level_10.png" alt="Vịt Vương Miện">
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 18px;">
+                <label class="btn-upload-avatar">
+                    📁 Tải Ảnh Tùy Chỉnh Từ Máy Tính / Điện Thoại
+                    <input type="file" id="input-avatar-file" accept="image/*" style="display: none;">
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 6: Clean Child Wish Entry Form Popup -->
+    <div class="modal-overlay" id="modal-wish-box">
+        <div class="modal-card duck-wish-modal-card" style="max-width: 440px; width: 90%; padding: 22px; box-sizing: border-box; border-radius: 24px; background: linear-gradient(180deg, #FFFDE7 0%, #FFF0F5 100%); border: 3px solid #FFD54F; box-shadow: 0 12px 30px rgba(255, 159, 28, 0.3); position: relative;">
+            <button class="modal-close btn-close-modal">&times;</button>
+
+            <!-- Header Title -->
+            <div style="text-align: center; margin-bottom: 14px;">
+                <div style="font-size: 2.5rem; margin-bottom: 4px;">✍️🎁</div>
+                <h2 class="modal-title" style="font-size: 1.3rem; margin-bottom: 4px; justify-content: center; color: var(--pink-dark);">
+                    VIẾT ƯỚC NGUYỆN CỦA CON 🐥
+                </h2>
+                <p style="text-align: center; color: var(--purple-dark); font-family: var(--font-heading); font-size: 0.92rem;">
+                    Con hãy điền ước nguyện mơ ước của mình vào đây để gửi cho Ba Mẹ nhé! 💖
+                </p>
+            </div>
+
+            <!-- Form Stage: Wish Entry Form -->
+            <div id="wish-form-stage" class="wish-stage">
+                <form id="form-submit-wish" style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="background: #FFF; border: 1.5px dashed #F48FB1; border-radius: 16px; padding: 12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);">
+                        <label style="font-family: var(--font-heading); color: #D81B60; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                            <span>📝</span> Lời Ước Của Con:
+                        </label>
+                        <textarea class="form-input wish-textarea" id="input-wish-content" maxlength="300" placeholder="Hôm nay con ước rằng..." required style="width: 100%; min-height: 95px; max-height: 125px; box-sizing: border-box; font-size: 0.98rem; padding: 10px; border-radius: 12px; border: 1.5px solid #FFC107; background: #FFFDF7; resize: vertical; line-height: 1.4;"></textarea>
+                        <div class="char-counter" style="text-align: right; font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">
+                            <span id="wish-char-count">0</span>/300 ký tự
+                        </div>
+                    </div>
+
+                    <!-- Emoji Quick Selectors -->
+                    <div class="wish-emoji-bar" style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap; background: #FFF9C4; padding: 6px 10px; border-radius: 12px; border: 1px solid #FFE082;">
+                        <span style="font-size: 0.78rem; color: #5D4037; font-weight: bold;">Cảm Xúc:</span>
+                        <button type="button" class="btn-wish-emoji" data-emoji="🐥" style="font-size: 1.1rem; padding: 2px 6px;">🐥</button>
+                        <button type="button" class="btn-wish-emoji" data-emoji="🥰" style="font-size: 1.1rem; padding: 2px 6px;">🥰</button>
+                        <button type="button" class="btn-wish-emoji" data-emoji="❤️" style="font-size: 1.1rem; padding: 2px 6px;">❤️</button>
+                        <button type="button" class="btn-wish-emoji" data-emoji="🌈" style="font-size: 1.1rem; padding: 2px 6px;">🌈</button>
+                        <button type="button" class="btn-wish-emoji" data-emoji="⭐" style="font-size: 1.1rem; padding: 2px 6px;">⭐</button>
+                        <button type="button" class="btn-wish-emoji" data-emoji="🦄" style="font-size: 1.1rem; padding: 2px 6px;">🦄</button>
+                        <button type="button" class="btn-wish-emoji" data-emoji="🎀" style="font-size: 1.1rem; padding: 2px 6px;">🎀</button>
+                        <button type="button" class="btn-wish-emoji" data-emoji="🎁" style="font-size: 1.1rem; padding: 2px 6px;">🎁</button>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; margin-top: 6px;">
+                        <button type="submit" class="btn-send-wish" style="flex: 1; padding: 12px; font-size: 1rem; border-radius: 16px; background: linear-gradient(135deg, #FF7043, #E91E63); color: #FFF; border: none; font-weight: bold; font-family: var(--font-heading); box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3); cursor: pointer;">💌 GỬI ĐIỀU ƯỚC CHO BA MẸ ✨</button>
+                        <button type="button" class="btn-cancel-wish btn-close-modal" style="padding: 12px 16px; font-size: 0.9rem; border-radius: 16px; background: #FFF; border: 1.5px solid #FFC107; color: #5D4037; font-weight: bold; cursor: pointer;">Để Sau</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Success Stage -->
+            <div id="wish-success-stage" class="wish-stage" style="display:none; text-align: center; padding: 15px 0;">
+                <div style="font-size: 3.5rem; margin-bottom: 6px;">⭐</div>
+                <h2 style="color: var(--pink-dark); font-family: var(--font-heading); font-size: 1.25rem; margin-bottom: 8px;">
+                    🎉 Ước Nguyện Của Con Đã Được Gửi! 💖
+                </h2>
+                <p style="font-size: 0.92rem; color: var(--purple-dark); margin-bottom: 16px; line-height: 1.5;">
+                    Ba Mẹ sẽ xem điều ước của con trong <strong>Góc Ba Mẹ</strong> để yêu thương & đưa vào phần quà cho con nhé! 🎁✨
+                </p>
+                <button type="button" class="btn-admin-submit btn-close-modal" style="width: auto; padding: 10px 28px; display: inline-block; font-size: 0.95rem; border-radius: 16px;">
+                    ĐÓNG 💖
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 7: Child Wish History & Journey Timeline -->
+    <div class="modal-overlay" id="modal-wish-journey">
+        <div class="modal-card" style="max-width: 650px;">
+            <button class="modal-close btn-close-modal">&times;</button>
+            <h2 class="modal-title"><span>📜</span> Hành Trình Điều Ước Của Bé 🌈</h2>
+            <div id="wish-journey-list">
+                <!-- Rendered dynamically by app.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 8: Parent Dispatch Gift Popup -->
+    <div class="modal-overlay" id="modal-parent-dispatch-gift">
+        <div class="modal-card" style="max-width: 560px;">
+            <button class="modal-close btn-close-modal">&times;</button>
+            <h2 class="modal-title"><span>🎁</span> Biến Điều Ước Thành Quà Tặng</h2>
+            <div class="dispatch-wish-preview-box" id="dispatch-wish-preview"></div>
+
+            <form id="form-dispatch-gift">
+                <input type="hidden" id="dispatch-wish-id">
+                
+                <div class="form-group" style="margin-top: 14px;">
+                    <label style="font-weight: bold; color: var(--purple-dark);">Chọn Loại Phần Quà / Trải Nghiệm</label>
+                    <div class="gift-type-options">
+                        <label class="gift-radio-pill"><input type="radio" name="giftType" value="gift" checked> 🎁 Món quà</label>
+                        <label class="gift-radio-pill"><input type="radio" name="giftType" value="experience"> 🌈 Trải nghiệm</label>
+                        <label class="gift-radio-pill"><input type="radio" name="giftType" value="outing"> 🍰 Buổi đi chơi</label>
+                        <label class="gift-radio-pill"><input type="radio" name="giftType" value="trip"> 🎡 Chuyến đi</label>
+                        <label class="gift-radio-pill"><input type="radio" name="giftType" value="surprise"> ❤️ Điều bất ngờ</label>
+                        <label class="gift-radio-pill"><input type="radio" name="giftType" value="custom"> ✍️ Quà khác</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="font-weight: bold; color: var(--purple-dark);">Chi Tiết Quà / Lời Nhắn Từ Ba Mẹ</label>
+                    <input type="text" class="form-input" id="input-dispatch-gift-title" placeholder="VD: Tặng con chuyến đi Đà Lạt vào cuối tuần này ❤️" required>
+                </div>
+
+                <div class="form-group" style="background: #FFFDE7; padding: 12px; border-radius: 14px; border: 1.5px dashed #FFD700;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #856404; font-weight: bold; margin: 0;">
+                        <input type="checkbox" id="input-dispatch-secret" checked style="width: 18px; height: 18px;">
+                        🔒 Giữ Bí Mật Quà (Bé chỉ thấy "Ba Mẹ gửi một điều bất ngờ!" và bấm mở quà sau)
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-admin-submit" style="width: 100%; margin-top: 10px;">
+                    ✨ XÁC NHẬN ĐIỀU QUÀ
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 9: Cute Real-Time Task Stopwatch & Timer Widget -->
+    <div class="modal-overlay" id="modal-task-timer">
+        <div class="modal-card" style="max-width: 460px; text-align: center; background: linear-gradient(180deg, #FFFDE7 0%, #FFF0F5 100%); border: 3px solid #FFD15C; border-radius: 28px;">
+            <button class="modal-close btn-close-modal">&times;</button>
+            
+            <div style="font-size: 2.8rem; margin-bottom: 4px;">⏱️🐥</div>
+            <h2 class="modal-title" id="timer-modal-title" style="justify-content: center; color: var(--pink-dark); font-size: 1.35rem;">
+                ĐỒNG HỒ ĐẾM GIỜ VỊT CON
+            </h2>
+            <div id="timer-task-name" style="font-family: var(--font-heading); font-size: 1.05rem; color: var(--purple-dark); margin-bottom: 14px;">
+                📚 Học bài & làm bài tập
+            </div>
+
+            <!-- Big Digital Clock Display HH:MM:SS -->
+            <div class="digital-clock-box" style="background: #FFF; border: 3px solid #FF9F1C; border-radius: 22px; padding: 18px 10px; margin: 10px 0 16px 0; box-shadow: 0 8px 24px rgba(255, 159, 28, 0.25);">
+                <div id="timer-display-hhmmss" style="font-family: 'Courier New', monospace, var(--font-heading); font-size: 3.2rem; font-weight: bold; color: #D81B60; letter-spacing: 2px;">
+                    00:00:00
+                </div>
+                <div style="display: flex; justify-content: center; gap: 36px; font-size: 0.78rem; color: var(--text-muted); font-weight: bold; margin-top: 4px;">
+                    <span>GIỜ</span><span>PHÚT</span><span>GIÂY</span>
+                </div>
+            </div>
+
+            <!-- Live Mascot Encouragement Status -->
+            <div id="timer-status-text" style="font-size: 0.92rem; color: #5D4037; background: #FFF9C4; padding: 8px 14px; border-radius: 14px; margin-bottom: 16px; border: 1px solid #FFE082;">
+                🐣 Vịt con sẵn sàng đồng hành cùng bé! Bấm Bắt đầu để đếm giờ nhé! ✨
+            </div>
+
+            <!-- Action Controls -->
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" id="btn-timer-toggle-play" style="flex: 1; padding: 14px; font-size: 1.05rem; border-radius: 18px; background: linear-gradient(135deg, #4CAF50, #2E7D32); color: #FFF; border: none; font-weight: bold; cursor: pointer; box-shadow: 0 4px 14px rgba(76, 175, 80, 0.35); font-family: var(--font-heading);">
+                        ▶️ BẮT ĐẦU ĐẾM GIỜ
+                    </button>
+                    <button type="button" id="btn-timer-reset" style="padding: 14px 18px; font-size: 0.95rem; border-radius: 18px; background: #FFF; border: 2px solid #FF9F1C; color: #5D4037; font-weight: bold; cursor: pointer;">
+                        🔄 Đặt Lại
+                    </button>
+                </div>
+
+                <button type="button" id="btn-timer-stop-save" style="padding: 14px; font-size: 1rem; border-radius: 18px; background: linear-gradient(135deg, #FF7043, #E91E63); color: #FFF; border: none; font-weight: bold; cursor: pointer; box-shadow: 0 4px 14px rgba(233, 30, 99, 0.35); font-family: var(--font-heading);">
+                    ⏹️ HOÀN THÀNH & GHI NHẬN THỜI GIAN LÀM ✨
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 10: Date Travel Calendar Picker (Chọn Ngày Tháng Năm Bất Kỳ) -->
+    <div class="modal-overlay" id="modal-date-travel">
+        <div class="modal-card cute-modal" style="max-width: 480px; text-align: center; background: linear-gradient(180deg, #FFFDF7 0%, #FFF0F5 100%); border: 3.5px solid #9C27B0; border-radius: 28px;">
+            <button class="modal-close btn-close-modal">&times;</button>
+            
+            <div style="font-size: 2.8rem; margin-bottom: 4px; animation: bounce 2s infinite;">🗓️🚀</div>
+            <h2 class="modal-title" style="justify-content: center; color: var(--purple-dark); font-size: 1.35rem; font-family: var(--font-heading);">
+                CHUYẾN XE THỜI GIAN VỊT CON 🐣✨
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px;">
+                Chọn ngày tháng năm để quay ngược về quá khứ hoặc đến tương lai nhé!
+            </p>
+
+            <!-- Native Calendar Input -->
+            <div class="form-group" style="background: #FFF; padding: 14px; border-radius: 18px; border: 2px solid var(--pink-light); margin-bottom: 14px;">
+                <label style="display: block; font-weight: bold; color: var(--pink-dark); margin-bottom: 8px; font-size: 0.95rem;">
+                    📅 Lịch Chọn Ngày Tháng Năm:
+                </label>
+                <input type="date" id="modal-input-date-picker" class="form-input" style="font-family: var(--font-heading); font-size: 1.15rem; text-align: center; color: var(--purple-dark); background: #FFFDF7; border: 2px solid #9C27B0; border-radius: 12px; padding: 8px; cursor: pointer;">
+            </div>
+
+            <!-- Fast Dropdowns for Day, Month, Year -->
+            <div class="form-group" style="background: #FFFDF7; padding: 14px; border-radius: 18px; border: 2px solid #FFD15C; margin-bottom: 18px;">
+                <label style="display: block; font-weight: bold; color: #5D4037; margin-bottom: 10px; font-size: 0.95rem;">
+                    ⚙️ Chọn Nhanh Ngày / Tháng / Năm:
+                </label>
+                <div style="display: flex; gap: 8px; justify-content: center;">
+                    <select id="modal-select-day" class="form-input" style="flex: 1; font-weight: bold; font-size: 0.95rem; font-family: var(--font-heading); padding: 8px; background: #FFF; border-radius: 10px;">
+                    </select>
+                    <select id="modal-select-month" class="form-input" style="flex: 1; font-weight: bold; font-size: 0.95rem; font-family: var(--font-heading); padding: 8px; background: #FFF; border-radius: 10px;">
+                    </select>
+                    <select id="modal-select-year" class="form-input" style="flex: 1; font-weight: bold; font-size: 0.95rem; font-family: var(--font-heading); padding: 8px; background: #FFF; border-radius: 10px;">
+                    </select>
+                </div>
+                <div style="font-size: 0.95rem; color: #7E57C2; font-weight: bold; margin-top: 10px;">
+                    Hiển thị mốc: <span id="modal-preview-date-str" style="background: #FFF; padding: 4px 10px; border-radius: 8px; border: 1.5px solid #9C27B0; color: #4A148C;">17/09/26</span>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div style="margin-bottom: 16px;">
+                <button type="button" id="btn-modal-submit-date" style="width: 100%; padding: 14px; font-size: 1.08rem; font-family: var(--font-heading); font-weight: bold; border-radius: 18px; background: linear-gradient(135deg, #7E57C2, #5E35B1); color: #FFF; border: none; cursor: pointer; box-shadow: 0 4px 14px rgba(126, 87, 194, 0.4);">
+                    🚀 LẬT SÁCH ĐẾN NGÀY NÀY ✨
+                </button>
+            </div>
+
+            <!-- Quick Presets -->
+            <div style="border-top: 1.5px dashed var(--pink-light); padding-top: 14px;">
+                <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: bold; margin-bottom: 8px;">
+                    ⚡ Di Chuyển Nhanh:
+                </div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;">
+                    <button type="button" class="btn-preset-quick" id="btn-preset-past-month" style="padding: 6px 10px; border-radius: 10px; font-size: 0.82rem; font-weight: bold; background: #EDE7F6; color: #512DA8; border: 1px solid #D1C4E9; cursor: pointer;">⏳ -1 Tháng</button>
+                    <button type="button" class="btn-preset-quick" id="btn-preset-past-week" style="padding: 6px 10px; border-radius: 10px; font-size: 0.82rem; font-weight: bold; background: #EDE7F6; color: #512DA8; border: 1px solid #D1C4E9; cursor: pointer;">◀ -1 Tuần</button>
+                    <button type="button" class="btn-preset-quick" id="btn-preset-today" style="padding: 6px 10px; border-radius: 10px; font-size: 0.82rem; font-weight: bold; background: #FCE4EC; color: #C2185B; border: 1px solid #F8BBD0; cursor: pointer;">📌 Hôm Nay</button>
+                    <button type="button" class="btn-preset-quick" id="btn-preset-future-week" style="padding: 6px 10px; border-radius: 10px; font-size: 0.82rem; font-weight: bold; background: #E0F2F1; color: #00796B; border: 1px solid #B2DFDB; cursor: pointer;">+1 Tuần ▶</button>
+                    <button type="button" class="btn-preset-quick" id="btn-preset-future-month" style="padding: 6px 10px; border-radius: 10px; font-size: 0.82rem; font-weight: bold; background: #E0F2F1; color: #00796B; border: 1px solid #B2DFDB; cursor: pointer;">+1 Tháng 🚀</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Synthesizer & Canvas Fireworks Scripts -->
+    <script src="js/sound.js"></script>
+    <script src="js/fireworks.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
