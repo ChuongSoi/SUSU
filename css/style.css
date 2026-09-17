@@ -3,7 +3,7 @@
    Theme: Cute Duck Sunny Yellow, Soft Peach Orange & Pastel Pink
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&family=Dancing+Script:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Comfortaa:wght@600;700&family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800;900&display=swap');
 
 :root {
     --duck-yellow-light: #FFFDE7;
@@ -44,15 +44,15 @@
     --mint-dark: #4CAF50;
 
     --text-color: #3D2314;
-    --text-muted: #8C6D58;
+    --text-muted: #7A5B45;
     --card-bg: rgba(255, 253, 247, 0.95);
     --card-border: #FFD15C;
     --shadow-soft: 0 12px 28px rgba(255, 159, 28, 0.18), inset 0 2px 4px rgba(255, 255, 255, 0.8);
     --shadow-hover: 0 18px 38px rgba(255, 159, 28, 0.28), inset 0 2px 4px rgba(255, 255, 255, 0.9);
 
-    --font-heading: 'Fredoka', cursive, sans-serif;
-    --font-body: 'Quicksand', sans-serif;
-    --font-handwritten: 'Dancing Script', cursive;
+    --font-heading: 'Comfortaa', 'Fredoka', 'Nunito', sans-serif;
+    --font-body: 'Nunito', 'Be Vietnam Pro', sans-serif;
+    --font-handwritten: 'Comfortaa', cursive, sans-serif;
 }
 
 * {
@@ -69,7 +69,12 @@ img {
 
 body {
     font-family: var(--font-body);
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.6;
     color: var(--text-color);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     background: linear-gradient(135deg, #FFFDE7 0%, #FFE66D 30%, #FFE5D9 70%, #FFC6FF 100%);
     background-attachment: fixed;
     min-height: 100vh;
@@ -2237,8 +2242,92 @@ button:active, .nav-tab:active, .day-bookmark:active {
     line-height: 1.5;
 }
 
-/* Responsive Touch Adjustments */
+/* Responsive Touch & iPad Adjustments */
+@media screen and (min-width: 601px) and (max-width: 1024px) {
+    body {
+        font-size: 1.18rem;
+        line-height: 1.65;
+    }
+    
+    .app-container {
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    .user-meta h1 {
+        font-size: 1.8rem;
+    }
+
+    .level-title-btn {
+        font-size: 1rem;
+        padding: 8px 16px;
+    }
+
+    .counter-badge {
+        font-size: 1.15rem;
+        padding: 10px 18px;
+    }
+
+    .nav-tab {
+        font-size: 1.15rem;
+        padding: 14px 18px;
+        font-weight: 700;
+    }
+
+    .day-bookmark {
+        font-size: 1.05rem;
+        padding: 12px 18px;
+        font-weight: 700;
+    }
+
+    .diary-page-day-title {
+        font-size: 1.75rem;
+        line-height: 1.4;
+    }
+
+    .habit-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .habit-reward {
+        font-size: 1.05rem;
+        font-weight: 600;
+    }
+
+    .btn-pick-custom-date, .btn-reset-today-week, .btn-time-travel {
+        font-size: 1.05rem;
+        padding: 10px 18px;
+    }
+
+    .badge-text {
+        font-size: 1.1rem;
+    }
+
+    .modal-card {
+        padding: 30px;
+        max-width: 90%;
+    }
+
+    .modal-title {
+        font-size: 1.6rem;
+    }
+
+    .form-input, .form-select, select, input, textarea {
+        font-size: 1.15rem;
+        padding: 14px 18px;
+    }
+
+    .btn-admin-submit, .btn-modal-submit, .btn-send-wish {
+        font-size: 1.2rem;
+        padding: 14px 28px;
+    }
+}
+
 @media (max-width: 600px) {
+    body {
+        font-size: 1.05rem;
+    }
     .header-card {
         flex-direction: column;
         align-items: flex-start;
@@ -2248,7 +2337,7 @@ button:active, .nav-tab:active, .day-bookmark:active {
         justify-content: space-between;
     }
     .user-meta h1 {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
     .xp-container {
         width: 100%;
@@ -2263,7 +2352,7 @@ button:active, .nav-tab:active, .day-bookmark:active {
         grid-template-columns: repeat(4, 1fr);
     }
     .diary-page-day-title {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
     }
 }
 
