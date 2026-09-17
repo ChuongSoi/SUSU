@@ -623,9 +623,14 @@
                         <label>Chỉ Tiêu Tuần (% Hoàn thành tối thiểu)</label>
                         <input type="number" class="form-input" id="input-setting-target" value="80" min="50" max="100" required>
                     </div>
-                    <div class="form-group">
-                        <label>Đổi Mã PIN Ba Mẹ (4 chữ số)</label>
-                        <input type="password" class="form-input" id="input-setting-pin" maxlength="4" placeholder="1234">
+                    <div class="form-group" style="background: #FFF8FA; padding: 14px; border-radius: 18px; border: 2px solid #F48FB1; margin-top: 14px;">
+                        <label style="font-weight: bold; color: var(--pink-dark); display: flex; align-items: center; gap: 6px;">
+                            <span>🔒</span> Cài Đặt / Đổi Mật Khẩu Mã PIN Ba Mẹ (4 chữ số):
+                        </label>
+                        <input type="text" class="form-input" id="input-setting-pin" maxlength="4" placeholder="1234" pattern="[0-9]{4}" style="font-family: var(--font-heading); font-size: 1.25rem; letter-spacing: 6px; text-align: center; color: var(--purple-dark); font-weight: bold; background: #FFF; border: 2px solid var(--purple-dark); border-radius: 14px; padding: 10px; margin-top: 8px;">
+                        <small style="display: block; color: var(--text-muted); margin-top: 6px; font-size: 0.88rem; line-height: 1.4;">
+                            👉 Nhập 4 chữ số mới bất kỳ (VD: 8888, 9999, 5555) rồi bấm <strong>Lưu Cài Đặt</strong> để đổi mật khẩu bảo vệ Góc Ba Mẹ.
+                        </small>
                     </div>
                     <button type="submit" class="btn-admin-submit">Lưu Cài Đặt</button>
                 </form>

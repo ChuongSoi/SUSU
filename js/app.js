@@ -874,11 +874,25 @@ class PrincessApp {
             if (name) this.state.princessName = name;
             if (gift) this.state.weekendGift = gift;
             this.state.weeklyTarget = target;
-            if (newPin && newPin.length === 4) this.state.parentPin = newPin;
+            
+            let pinChanged = false;
+            if (newPin) {
+                if (/^\d{4}$/.test(newPin)) {
+                    this.state.parentPin = newPin;
+                    pinChanged = true;
+                } else {
+                    alert("⚠️ Mật khẩu PIN mới phải gồm đúng 4 chữ số (ví dụ: 1234, 8888, 9999)!");
+                    return;
+                }
+            }
 
             this.saveState();
             this.renderAll();
-            alert("Đã lưu cài đặt mới!");
+            if (pinChanged) {
+                alert(`✅ Đã cài đặt lại Mật Khẩu Mã PIN Ba Mẹ thành công!\nMật khẩu mới để mở Góc Ba Mẹ là: ${newPin}`);
+            } else {
+                alert("✅ Đã lưu cài đặt mới cho Góc Ba Mẹ!");
+            }
             sounds.playSparkle();
         });
 
@@ -1222,9 +1236,11 @@ class PrincessApp {
     }
 
     openAdminPanel() {
-        document.getElementById('input-setting-name').value = this.state.princessName;
-        document.getElementById('input-setting-chest-gift').value = this.state.weekendGift;
-        document.getElementById('input-setting-target').value = this.state.weeklyTarget;
+        document.getElementById('input-setting-name').value = this.state.princessName || 'Bé Yêu';
+        document.getElementById('input-setting-chest-gift').value = this.state.weekendGift || '';
+        document.getElementById('input-setting-target').value = this.state.weeklyTarget || 80;
+        const pinInput = document.getElementById('input-setting-pin');
+        if (pinInput) pinInput.value = this.state.parentPin || "1234";
         
         this.renderAdminLists();
         this.initIconPickers();
