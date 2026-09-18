@@ -3073,3 +3073,108 @@ button:active, .nav-tab:active, .day-bookmark:active {
     border-color: var(--purple-dark);
 }
 
+/* Cloud Sync Header Pill & Notifications */
+.cloud-sync-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1.5px solid #81C784;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #2E7D32;
+    box-shadow: 0 3px 10px rgba(76, 175, 80, 0.15);
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.cloud-sync-pill.syncing {
+    border-color: #64B5F6;
+    color: #1565C0;
+    background: #E3F2FD;
+    animation: syncPulse 1.2s infinite ease-in-out;
+}
+
+.cloud-sync-pill.error {
+    border-color: #E57373;
+    color: #C62828;
+    background: #FFEBEE;
+}
+
+@keyframes syncPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.75; transform: scale(0.97); }
+}
+
+/* Floating Toast Notification */
+.cloud-sync-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 99999;
+    max-width: 380px;
+    animation: toastSlideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cloud-sync-toast .toast-content {
+    background: linear-gradient(135deg, #FFF 0%, #FFF3E0 100%);
+    border: 2px solid #FF9800;
+    border-radius: 20px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(255, 152, 0, 0.35);
+}
+
+.cloud-sync-toast .toast-icon {
+    font-size: 1.8rem;
+    animation: bellRing 1s infinite ease-in-out;
+}
+
+.cloud-sync-toast .toast-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.cloud-sync-toast .toast-text strong {
+    color: #E65100;
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+}
+
+.cloud-sync-toast .toast-text span {
+    color: #5D4037;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.cloud-sync-toast .toast-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: #BCAAA4;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px;
+}
+
+.cloud-sync-toast .toast-close-btn:hover {
+    color: #E65100;
+}
+
+@keyframes toastSlideUp {
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bellRing {
+    0%, 100% { transform: rotate(0); }
+    20%, 60% { transform: rotate(15deg); }
+    40%, 80% { transform: rotate(-15deg); }
+}
+

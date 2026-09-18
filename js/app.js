@@ -117,6 +117,7 @@ class PrincessApp {
         this.renderAll();
         this.initIconPickers();
         this.initDayPickerEvents();
+        this.initCloudSync();
     }
 
     getTodayCode() {
@@ -269,7 +270,12 @@ class PrincessApp {
 
     saveState() {
         try {
+            this.state.updatedAt = Date.now();
             localStorage.setItem('cute_princess_app_state', JSON.stringify(this.state));
+            if (this.syncChannel) {
+                this.syncChannel.postMessage({ type: 'SYNC_UPDATE', updatedAt: this.state.updatedAt });
+            }
+            this.pushStateToCloud();
         } catch (e) {
             console.error("Failed to save state:", e);
         }
@@ -3377,6 +3383,312 @@ class PrincessApp {
         this.renderAll();
         this.renderAdminLists();
         alert(`🎉 Đã đưa điều ước "${wish.content}" vào Cửa Hàng Đổi Thưởng với giá ${cost} ⭐ thành công!`);
+    }
+
+    // ==========================================
+    // MULTI-DEVICE CLOUD SYNC ENGINE
+    // ==========================================
+    initCloudSync() {
+        this.familyCode = localStorage.getItem('susu_family_code') || 'SUSU-CHUONGSOI';
+        this.cloudObjectIdMap = JSON.parse(localStorage.getItem('susu_cloud_map') || '{}');
+        this.cloudObjectIdMap['SUSU-CHUONGSOI'] = 'ff808181a09d98f701a0b4c336863574';
+        
+        // Multi-tab BroadcastChannel
+        if (typeof BroadcastChannel !== 'undefined') {
+            this.syncChannel = new BroadcastChannel('susu_family_sync_channel');
+            this.syncChannel.onmessage = (event) => {
+                if (event.data && event.data.type === 'SYNC_UPDATE') {
+                    const saved = localStorage.getItem('cute_princess_app_state');
+                    if (saved) {
+                        try {
+                            this.state = JSON.parse(saved);
+                            this.renderAll();
+                        } catch(e){}
+                    }
+                }
+            };
+        }
+
+        // DOM elements for Cloud Sync
+        this.domCloudPill = document.getElementById('cloud-sync-pill');
+        this.domCloudDot = document.getElementById('cloud-sync-dot');
+        this.domCloudText = document.getElementById('cloud-sync-text');
+        this.domFamilyCodeInput = document.getElementById('input-family-sync-code');
+        this.domSaveFamilyCodeBtn = document.getElementById('btn-save-family-code');
+        this.domForcePushBtn = document.getElementById('btn-force-push-sync');
+        this.domForcePullBtn = document.getElementById('btn-force-pull-sync');
+        this.domCopyDataBtn = document.getElementById('btn-copy-sync-data');
+        this.domImportDataBtn = document.getElementById('btn-import-sync-data');
+        this.domSyncStatusMsg = document.getElementById('cloud-sync-status-msg');
+        
+        // Toast elements
+        this.domToastContainer = document.getElementById('cloud-sync-toast');
+        this.domToastTitle = document.getElementById('toast-title');
+        this.domToastMsg = document.getElementById('toast-msg');
+        this.domToastClose = document.getElementById('toast-close-btn');
+
+        if (this.domFamilyCodeInput) {
+            this.domFamilyCodeInput.value = this.familyCode;
+        }
+
+        if (this.domSaveFamilyCodeBtn) {
+            this.domSaveFamilyCodeBtn.addEventListener('click', () => {
+                const newCode = (this.domFamilyCodeInput.value || '').trim().toUpperCase();
+                if (newCode) {
+                    this.familyCode = newCode;
+                    localStorage.setItem('susu_family_code', newCode);
+                    this.showSyncStatusMsg(`✅ Đã lưu Mã Gia Đình: ${newCode}. Đang kết nối...`);
+                    this.pullCloudSync(true);
+                }
+            });
+        }
+
+        if (this.domForcePushBtn) {
+            this.domForcePushBtn.addEventListener('click', () => {
+                this.pushStateToCloud(true);
+            });
+        }
+
+        if (this.domForcePullBtn) {
+            this.domForcePullBtn.addEventListener('click', () => {
+                this.pullCloudSync(true);
+            });
+        }
+
+        if (this.domCopyDataBtn) {
+            this.domCopyDataBtn.addEventListener('click', () => {
+                this.copyBackupDataCode();
+            });
+        }
+
+        if (this.domImportDataBtn) {
+            this.domImportDataBtn.addEventListener('click', () => {
+                this.importBackupDataCode();
+            });
+        }
+
+        if (this.domToastClose) {
+            this.domToastClose.addEventListener('click', () => {
+                if (this.domToastContainer) this.domToastContainer.style.display = 'none';
+            });
+        }
+
+        // Initial fetch from cloud
+        this.pullCloudSync(false);
+
+        // Background polling every 3.5 seconds
+        if (this.cloudSyncInterval) clearInterval(this.cloudSyncInterval);
+        this.cloudSyncInterval = setInterval(() => {
+            this.pollCloudSync();
+        }, 3500);
+    }
+
+    getCloudObjectId(code) {
+        if (!code) code = this.familyCode || 'SUSU-CHUONGSOI';
+        if (code === 'SUSU-CHUONGSOI') return 'ff808181a09d98f701a0b4c336863574';
+        return this.cloudObjectIdMap[code] || null;
+    }
+
+    async pushStateToCloud(isManual = false) {
+        if (!this.state.updatedAt) this.state.updatedAt = Date.now();
+        this.updateCloudPillState('syncing');
+
+        try {
+            let cloudId = this.getCloudObjectId(this.familyCode);
+            if (cloudId) {
+                const res = await fetch('https://api.restful-api.dev/objects/' + cloudId, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'SUSU_FAMILY_DATA_' + this.familyCode,
+                        data: this.state
+                    })
+                });
+                if (res.ok) {
+                    this.updateCloudPillState('synced');
+                    if (isManual) this.showSyncStatusMsg('✅ Đã đẩy dữ liệu mới nhất lên Cloud thành công!');
+                    return;
+                }
+            }
+            
+            // If no cloudId or 404, create a new Cloud Object for this Family Code
+            const createRes = await fetch('https://api.restful-api.dev/objects', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: 'SUSU_FAMILY_DATA_' + this.familyCode,
+                    data: this.state
+                })
+            });
+            if (createRes.ok) {
+                const createdObj = await createRes.json();
+                this.cloudObjectIdMap[this.familyCode] = createdObj.id;
+                localStorage.setItem('susu_cloud_map', JSON.stringify(this.cloudObjectIdMap));
+                this.updateCloudPillState('synced');
+                if (isManual) this.showSyncStatusMsg('✅ Đã khởi tạo và đẩy dữ liệu lên Cloud thành công!');
+            } else {
+                this.updateCloudPillState('error');
+            }
+        } catch (e) {
+            console.warn("Cloud push failed:", e);
+            this.updateCloudPillState('error');
+            if (isManual) this.showSyncStatusMsg('⚠️ Lỗi kết nối mạng khi đẩy dữ liệu.');
+        }
+    }
+
+    async pollCloudSync() {
+        await this.pullCloudSync(false);
+    }
+
+    async pullCloudSync(isManual = false) {
+        const cloudId = this.getCloudObjectId(this.familyCode);
+        if (!cloudId) {
+            if (isManual) this.showSyncStatusMsg('⚠️ Chưa có dữ liệu Cloud cho mã này. Đang tự động tải dữ liệu local lên...');
+            await this.pushStateToCloud(isManual);
+            return;
+        }
+
+        try {
+            if (isManual) this.updateCloudPillState('syncing');
+            const res = await fetch('https://api.restful-api.dev/objects/' + cloudId);
+            if (res.status === 404) {
+                await this.pushStateToCloud(isManual);
+                return;
+            }
+            if (res.ok) {
+                const cloudObj = await res.json();
+                if (cloudObj && cloudObj.data && cloudObj.data.updatedAt) {
+                    const cloudState = cloudObj.data;
+                    const localTime = this.state.updatedAt || 0;
+
+                    if (cloudState.updatedAt > localTime) {
+                        // Check for new pending approvals to alert parents
+                        const oldPendingCount = this.getPendingApprovalsCount();
+                        this.state = cloudState;
+                        localStorage.setItem('cute_princess_app_state', JSON.stringify(this.state));
+                        if (this.syncChannel) {
+                            this.syncChannel.postMessage({ type: 'SYNC_UPDATE', updatedAt: this.state.updatedAt });
+                        }
+                        this.renderAll();
+                        this.updateCloudPillState('synced');
+
+                        const newPendingCount = this.getPendingApprovalsCount();
+                        if (newPendingCount > oldPendingCount) {
+                            this.showToastNotification(
+                                '🔔 BA MẸ ƠI!',
+                                `Bé vừa gửi ${newPendingCount - oldPendingCount} nhiệm vụ mới chờ duyệt!`
+                            );
+                            if (window.sounds && typeof window.sounds.playSuccess === 'function') {
+                                window.sounds.playSuccess();
+                            }
+                        }
+
+                        if (isManual) this.showSyncStatusMsg('✅ Đã đồng bộ dữ liệu mới nhất từ Cloud!');
+                    } else if (cloudState.updatedAt < localTime) {
+                        // Local is newer, push to cloud
+                        await this.pushStateToCloud(false);
+                    } else {
+                        this.updateCloudPillState('synced');
+                        if (isManual) this.showSyncStatusMsg('✅ Dữ liệu trên thiết bị đã là mới nhất!');
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn("Cloud pull failed:", e);
+            if (isManual) {
+                this.updateCloudPillState('error');
+                this.showSyncStatusMsg('⚠️ Kết nối mạng gián đoạn. Sử dụng dữ liệu lưu trên máy.');
+            }
+        }
+    }
+
+    getPendingApprovalsCount() {
+        let count = 0;
+        if (this.state && Array.isArray(this.state.dailyTasks)) {
+            this.state.dailyTasks.forEach(t => {
+                if (t.dayStatuses) {
+                    Object.values(t.dayStatuses).forEach(s => {
+                        if (s === 'pendingApproval') count++;
+                    });
+                }
+            });
+        }
+        if (this.state && Array.isArray(this.state.challenges)) {
+            this.state.challenges.forEach(c => {
+                if (c.status === 'pendingApproval') count++;
+            });
+        }
+        return count;
+    }
+
+    updateCloudPillState(status) {
+        if (!this.domCloudPill || !this.domCloudDot || !this.domCloudText) return;
+        this.domCloudPill.classList.remove('syncing', 'error');
+        if (status === 'syncing') {
+            this.domCloudPill.classList.add('syncing');
+            this.domCloudDot.textContent = '🔄';
+            this.domCloudText.textContent = 'Đang đồng bộ...';
+        } else if (status === 'error') {
+            this.domCloudPill.classList.add('error');
+            this.domCloudDot.textContent = '⚠️';
+            this.domCloudText.textContent = 'Ngoại tuyến';
+        } else {
+            this.domCloudDot.textContent = '🟢';
+            this.domCloudText.textContent = 'Đã đồng bộ';
+        }
+    }
+
+    showSyncStatusMsg(msg) {
+        if (!this.domSyncStatusMsg) return;
+        this.domSyncStatusMsg.textContent = msg;
+        this.domSyncStatusMsg.style.display = 'block';
+        setTimeout(() => {
+            if (this.domSyncStatusMsg) this.domSyncStatusMsg.style.display = 'none';
+        }, 5000);
+    }
+
+    showToastNotification(title, message) {
+        if (!this.domToastContainer || !this.domToastTitle || !this.domToastMsg) return;
+        this.domToastTitle.textContent = title;
+        this.domToastMsg.textContent = message;
+        this.domToastContainer.style.display = 'block';
+        setTimeout(() => {
+            if (this.domToastContainer) this.domToastContainer.style.display = 'none';
+        }, 8000);
+    }
+
+    copyBackupDataCode() {
+        try {
+            const dataStr = JSON.stringify(this.state);
+            const base64Str = btoa(unescape(encodeURIComponent(dataStr)));
+            navigator.clipboard.writeText(base64Str).then(() => {
+                alert('✅ Đã sao chép Mã Backup Dữ Liệu vào bộ nhớ tạm!\n\nBa mẹ có thể dán (paste) mã này qua Zalo / Mess hoặc máy khác để đồng bộ 100% dữ liệu!');
+            }).catch(() => {
+                prompt('Copy Mã Backup Dữ Liệu bên dưới:', base64Str);
+            });
+        } catch(e) {
+            alert('Lỗi tạo mã backup: ' + e.message);
+        }
+    }
+
+    importBackupDataCode() {
+        const inputStr = prompt('Dán Mã Backup Dữ Liệu (chuỗi chữ cái Base64) vào đây để khôi phục/đồng bộ:');
+        if (!inputStr) return;
+        try {
+            const jsonStr = decodeURIComponent(escape(atob(inputStr.trim())));
+            const parsed = JSON.parse(jsonStr);
+            if (parsed && typeof parsed === 'object' && parsed.dailyTasks) {
+                this.state = parsed;
+                this.state.updatedAt = Date.now();
+                this.saveState();
+                this.renderAll();
+                alert('🎉 ĐÃ KHÔI PHỤC VÀ ĐỒNG BỘ DỮ LIỆU THÀNH CÔNG!');
+            } else {
+                alert('⚠️ Mã dữ liệu không hợp lệ!');
+            }
+        } catch(e) {
+            alert('⚠️ Lỗi giải mã dữ liệu: ' + e.message);
+        }
     }
 }
 
